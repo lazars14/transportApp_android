@@ -1,18 +1,22 @@
 package com.transportapp.lazar.transportapp.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
 
+import helpers.InternetHelper;
+import helpers.NavigationHelper;
+import model.User;
+import services.UserService;
+
+import static java.lang.Thread.sleep;
+
 public class SplashScreenActivity extends AppCompatActivity {
+
+    private UserService userService = new UserService();
+    private NavigationHelper navigationHelper = new NavigationHelper(getApplicationContext());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,17 +28,33 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-//        check internet connection
-//        check if logged in
-//        wait for one second
-//        if logged in main activity, or if not login activity
+        if(InternetHelper.isNetworkAvailable(this)){
 
-//        wait for one second code
-//        try {
-//            sleep(2000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+            User loggedUser = userService.login("nekiEmail", "nekiPassword");
+            Class navigateTo = null;
+
+            if(loggedUser == null) {
+                navigateTo = LoginActivity.class;
+
+            } else {
+                navigateTo = MainActivity.class;
+            }
+
+//            wait for one second
+            try {
+                sleep(1000);
+
+                navigationHelper.navigateTo(navigateTo, this);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+        } else {
+            Toast.makeText(this, R.string.turn_on_internet, Toast.LENGTH_LONG).show();
+        }
 
     }
 }
