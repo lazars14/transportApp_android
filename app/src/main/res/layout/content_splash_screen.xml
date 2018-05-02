@@ -9,13 +9,26 @@
     tools:showIn="@layout/activity_splash_screen"
     android:background="@color/splash_screen_background">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:src="@drawable/logo"
         android:id="@+id/imageView"
-        android:adjustViewBounds="true"
-        />
+        app:civ_border_width="2dp"
+        app:civ_border_color="@android:color/white"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/splash_screen_text"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:id="@+id/textView"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
