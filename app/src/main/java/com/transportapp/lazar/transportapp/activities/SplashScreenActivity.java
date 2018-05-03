@@ -1,60 +1,68 @@
 package com.transportapp.lazar.transportapp.activities;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
 
-import helpers.InternetHelper;
 import helpers.NavigationHelper;
-import model.User;
-import services.UserService;
 
 import static java.lang.Thread.sleep;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private UserService userService = new UserService();
-    private NavigationHelper navigationHelper = new NavigationHelper(getApplicationContext());
+    private NavigationHelper navigationHelper;
+    private Class navActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        navigationHelper = new NavigationHelper(getApplicationContext());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if(InternetHelper.isNetworkAvailable(this)){
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                sleepFor1Sec();
 
-            User loggedUser = userService.login("nekiEmail", "nekiPassword");
-            Class navigateTo = null;
+                navActivity = checkIfLoggedIn();
 
-            if(loggedUser == null) {
-                navigateTo = LoginActivity.class;
-
-            } else {
-                navigateTo = MainActivity.class;
+                Intent intent = new Intent(getApplicationContext(), navActivity);
+                startActivity(intent);
             }
+        };
 
-//            wait for one second
-            try {
-                sleep(1000);
+        thread.start();
 
-                navigationHelper.navigateTo(navigateTo, this);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    }
 
+    public void sleepFor1Sec() {
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public Class checkIfLoggedIn() {
+        Class navigateTo = null;
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        if(preferences.getString("user_token", "invalid").equals("invalid")) {
+            navigateTo = LoginActivity.class;
         } else {
-            Toast.makeText(this, R.string.turn_on_internet, Toast.LENGTH_LONG).show();
+            navigateTo = MainActivity.class;
         }
 
+        return navigateTo;
     }
 }
