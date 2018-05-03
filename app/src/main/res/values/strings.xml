@@ -104,4 +104,6 @@
     <string name="prompt_lastName">Lastname (optional)</string>
     <string name="prompt_address">Address (optional)</string>
     <string name="register_error">Register error</string>
+    <string name="default_authToken">default_authToken</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>

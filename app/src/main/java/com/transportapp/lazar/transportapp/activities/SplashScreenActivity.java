@@ -57,7 +57,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if(preferences.getString("user_token", "invalid").equals("invalid")) {
+        if(preferences.getString("user_authToken", this.getString(R.string.default_authToken)).equals(this.getString(R.string.default_authToken))) {
             navigateTo = LoginActivity.class;
         } else {
             navigateTo = MainActivity.class;
