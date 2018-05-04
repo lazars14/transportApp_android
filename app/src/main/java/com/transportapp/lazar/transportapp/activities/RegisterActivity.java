@@ -31,6 +31,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText firstNameTextView;
     private EditText lastNameTextView;
     private EditText addressTextView;
+    private EditText phoneNumberTextView;
     private Button registerButton;
 
 
@@ -42,13 +43,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setSupportActionBar(toolbar);
 
         navigationHelper = new NavigationHelper(this);
-        userService = new UserService();
+        userService = new UserService(this);
 
         emailTextView = findViewById(R.id.email_etxt);
         passwordTextView = findViewById(R.id.password_etxt);
         firstNameTextView = findViewById(R.id.firstName_etxt);
         lastNameTextView = findViewById(R.id.lastName_etxt);
         addressTextView = findViewById(R.id.address_etxt);
+        phoneNumberTextView = findViewById(R.id.phoneNumber_etxt);
 
         registerButton = findViewById(R.id.register_btn);
 
@@ -97,7 +99,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         if(InternetHelper.internet) {
             User loggedUser = userService.register(emailTextView.getText().toString(), passwordTextView.getText().toString(), firstNameTextView.getText().toString(),
-                    lastNameTextView.getText().toString(), addressTextView.getText().toString());
+                    lastNameTextView.getText().toString(), addressTextView.getText().toString(), phoneNumberTextView.getText().toString());
 
             if(loggedUser != null) {
                 navigationHelper.navigateTo(MainActivity.class, this);

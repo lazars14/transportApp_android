@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         navigationHelper = new NavigationHelper(this);
-        userService = new UserService();
+        userService = new UserService(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_updateInfo) {
             navigationHelper.navigateTo(UpdateInfoActivity.class, this);
         } else if (id == R.id.nav_logout) {
-            userService.logout(this);
+            userService.logout();
             navigationHelper.navigateTo(LoginActivity.class, this);
         }
 

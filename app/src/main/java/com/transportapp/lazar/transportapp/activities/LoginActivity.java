@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordTextView = findViewById(R.id.password);
         loginButon = findViewById(R.id.login_button);
 
-        userService = new UserService();
+        userService = new UserService(this);
 
         EditText[] editTexts = {emailTextView, passwordTextView};
 
