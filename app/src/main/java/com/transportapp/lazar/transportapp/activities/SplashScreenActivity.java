@@ -35,8 +35,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                 navActivity = checkIfLoggedIn();
 
-                Intent intent = new Intent(getApplicationContext(), navActivity);
-                startActivity(intent);
+                navigationHelper.navigateTo(navActivity, SplashScreenActivity.this);
             }
         };
 

@@ -107,4 +107,8 @@
     <string name="default_authToken">default_authToken</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="prompt_phoneNumber">Phone Number (optional)</string>
+    <string name="title_activity_request">RequestActivity</string>
+    <string name="title_activity_change_password">ChangePassword</string>
+    <string name="title_activity_add_request">Add Request</string>
+    <string name="title_activity_change_email">Change Email</string>
 </resources>
