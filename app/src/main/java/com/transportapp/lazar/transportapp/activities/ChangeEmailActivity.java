@@ -3,6 +3,9 @@ package com.transportapp.lazar.transportapp.activities;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,17 +15,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
 
+import helpers.InternetHelper;
 import helpers.NavigationHelper;
+import model.User;
 import services.UserService;
 
 public class ChangeEmailActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private NavigationHelper navigationHelper;
     private UserService userService;
+
+    /* UI references */
+    private EditText currentEmailTextView;
+    private EditText newEmailTextView;
+    private Button changeEmailButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +43,6 @@ public class ChangeEmailActivity extends AppCompatActivity
         setContentView(R.layout.activity_change_email);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -51,6 +55,41 @@ public class ChangeEmailActivity extends AppCompatActivity
 
         navigationHelper = new NavigationHelper(this);
         userService = new UserService(this);
+
+        currentEmailTextView = findViewById(R.id.currentEmail_etxt);
+        newEmailTextView = findViewById(R.id.newEmail_etxt);
+        changeEmailButton = findViewById(R.id.changeEmail_btn);
+
+        EditText[] editTexts = {currentEmailTextView, newEmailTextView};
+
+        for (EditText editText : editTexts) {
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    if(!changeEmailButton.isEnabled()) {
+                        /* button disabled */
+                        if(!TextUtils.isEmpty(currentEmailTextView.getText().toString()) && !TextUtils.isEmpty(newEmailTextView.getText().toString())) {
+                            changeEmailButton.setEnabled(true);
+                        }
+                    } else {
+                        /* button enabled */
+                        if(TextUtils.isEmpty(currentEmailTextView.getText().toString()) || TextUtils.isEmpty(newEmailTextView.getText().toString())) {
+                            changeEmailButton.setEnabled(false);
+                        }
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -107,5 +146,24 @@ public class ChangeEmailActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.login_button) {
+
+            InternetHelper.checkIfConnected(this);
+
+            if(InternetHelper.internet) {
+                boolean successfull = userService.changeEmail(currentEmailTextView.getText().toString(), newEmailTextView.getText().toString());
+
+                if(successfull) {
+                    navigationHelper.navigateTo(MainActivity.class, this);
+                } else {
+                    Toast.makeText(this, R.string.changeEmail_invalid, Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
     }
 }

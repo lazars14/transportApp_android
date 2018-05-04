@@ -3,6 +3,9 @@ package com.transportapp.lazar.transportapp.activities;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,17 +15,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
 
+import helpers.InternetHelper;
 import helpers.NavigationHelper;
 import services.UserService;
 
 public class ChangePasswordActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private NavigationHelper navigationHelper;
     private UserService userService;
+
+    /* UI references */
+    private EditText oldPasswordTextView;
+    private EditText newPasswordTextView;
+    private EditText repeatPasswordTextView;
+    private Button changePasswordButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +43,6 @@ public class ChangePasswordActivity extends AppCompatActivity
         setContentView(R.layout.activity_change_password);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -51,6 +55,42 @@ public class ChangePasswordActivity extends AppCompatActivity
 
         navigationHelper = new NavigationHelper(this);
         userService = new UserService(this);
+
+        oldPasswordTextView = findViewById(R.id.oldPassword_etxt);
+        newPasswordTextView = findViewById(R.id.newPassword_etxt);
+        repeatPasswordTextView = findViewById(R.id.repeatPassword_etxt);
+        changePasswordButton = findViewById(R.id.changePassword_btn);
+
+        EditText[] editTexts = {oldPasswordTextView, newPasswordTextView, repeatPasswordTextView};
+
+        for (EditText editText : editTexts) {
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    if(!changePasswordButton.isEnabled()) {
+                        /* button disabled */
+                        if(!TextUtils.isEmpty(oldPasswordTextView.getText().toString()) && !TextUtils.isEmpty(newPasswordTextView.getText().toString()) && !TextUtils.isEmpty(repeatPasswordTextView.getText().toString())) {
+                            changePasswordButton.setEnabled(true);
+                        }
+                    } else {
+                        /* button enabled */
+                        if(TextUtils.isEmpty(oldPasswordTextView.getText().toString()) || TextUtils.isEmpty(newPasswordTextView.getText().toString()) || TextUtils.isEmpty(repeatPasswordTextView.getText().toString())) {
+                            changePasswordButton.setEnabled(false);
+                        }
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -107,5 +147,24 @@ public class ChangePasswordActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.login_button) {
+
+            InternetHelper.checkIfConnected(this);
+
+            if(InternetHelper.internet) {
+                boolean successfull = userService.changePassword(oldPasswordTextView.getText().toString(), newPasswordTextView.getText().toString(), repeatPasswordTextView.getText().toString());
+
+                if(successfull) {
+                    navigationHelper.navigateTo(MainActivity.class, this);
+                } else {
+                    Toast.makeText(this, R.string.changePassword_invalid, Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
     }
 }

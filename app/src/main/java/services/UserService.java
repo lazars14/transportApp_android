@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -54,7 +55,16 @@ public class UserService {
 
                     }
                 }
-        );
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("x-access-token", AuthService.getAuthToken(context));
+                return headers;
+            }
+        };
         queue.add(request);
 
 //        if successfull fillUserData
@@ -70,7 +80,7 @@ public class UserService {
         params.put("firstName", firstName);
         params.put("lastName", lastName);
         params.put("address", address);
-        params.put("phoneNumber", phoneNumber);
+        params.put("phone", phoneNumber);
 
         String url = "apiUrl";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url,
@@ -91,7 +101,16 @@ public class UserService {
 
                     }
                 }
-        );
+        ){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("x-access-token", AuthService.getAuthToken(context));
+                return headers;
+            }
+        };
         queue.add(request);
 
 //        if successfull fillUserData
@@ -104,7 +123,7 @@ public class UserService {
         params.put("firstName", firstName);
         params.put("lastName", lastName);
         params.put("address", address);
-        params.put("phoneNumber", phoneNumber);
+        params.put("phone", phoneNumber);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String userId = preferences.getString("user_id", "default_userId");
@@ -128,7 +147,16 @@ public class UserService {
 
                     }
                 }
-        );
+        ){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("x-access-token", AuthService.getAuthToken(context));
+                return headers;
+            }
+        };
         queue.add(request);
 
         return true;
@@ -161,7 +189,16 @@ public class UserService {
 
                     }
                 }
-        );
+        ){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("x-access-token", AuthService.getAuthToken(context));
+                return headers;
+            }
+        };
         queue.add(request);
 
         return true;
@@ -195,7 +232,16 @@ public class UserService {
 
                     }
                 }
-        );
+        ){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("x-access-token", AuthService.getAuthToken(context));
+                return headers;
+            }
+        };
         queue.add(request);
 
         return true;

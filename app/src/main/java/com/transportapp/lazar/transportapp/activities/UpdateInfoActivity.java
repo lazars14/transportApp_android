@@ -3,6 +3,9 @@ package com.transportapp.lazar.transportapp.activities;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,17 +15,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
 
+import helpers.InternetHelper;
 import helpers.NavigationHelper;
 import services.UserService;
 
 public class UpdateInfoActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private NavigationHelper navigationHelper;
     private UserService userService;
+
+    /* UI references */
+    private EditText firstNameTextView;
+    private EditText lastNameTextView;
+    private EditText addressTextView;
+    private EditText phoneNumberTextView;
+    private Button updateInfoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +44,6 @@ public class UpdateInfoActivity extends AppCompatActivity
         setContentView(R.layout.activity_update_info);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -51,6 +56,46 @@ public class UpdateInfoActivity extends AppCompatActivity
 
         navigationHelper = new NavigationHelper(this);
         userService = new UserService(this);
+
+        firstNameTextView = findViewById(R.id.firstName_etxt);
+        lastNameTextView = findViewById(R.id.lastName_etxt);
+        addressTextView = findViewById(R.id.address_etxt);
+        phoneNumberTextView = findViewById(R.id.phoneNumber_etxt);
+
+        updateInfoButton = findViewById(R.id.updateInfo_btn);
+
+        EditText[] editTexts = {firstNameTextView, lastNameTextView, addressTextView, phoneNumberTextView};
+
+        for (EditText editText : editTexts) {
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    if(!updateInfoButton.isEnabled()) {
+                        /* button disabled */
+                        if(!TextUtils.isEmpty(firstNameTextView.getText().toString()) && !TextUtils.isEmpty(lastNameTextView.getText().toString()) &&
+                                !TextUtils.isEmpty(addressTextView.getText().toString()) && !TextUtils.isEmpty(phoneNumberTextView.getText().toString())) {
+                            updateInfoButton.setEnabled(true);
+                        }
+                    } else {
+                        /* button enabled */
+                        if(TextUtils.isEmpty(firstNameTextView.getText().toString()) || TextUtils.isEmpty(lastNameTextView.getText().toString()) ||
+                                TextUtils.isEmpty(addressTextView.getText().toString()) || TextUtils.isEmpty(phoneNumberTextView.getText().toString())) {
+                            updateInfoButton.setEnabled(false);
+                        }
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -107,5 +152,25 @@ public class UpdateInfoActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.login_button) {
+
+            InternetHelper.checkIfConnected(this);
+
+            if(InternetHelper.internet) {
+                boolean successfull = userService.updateInfo(firstNameTextView.getText().toString(), lastNameTextView.getText().toString(),
+                        addressTextView.getText().toString(), phoneNumberTextView.getText().toString());
+
+                if(successfull) {
+                    navigationHelper.navigateTo(MainActivity.class, this);
+                } else {
+                    Toast.makeText(this, R.string.updateInfo_invalid, Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
     }
 }

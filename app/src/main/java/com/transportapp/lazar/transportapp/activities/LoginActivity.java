@@ -26,7 +26,6 @@ import services.UserService;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private NavigationHelper navigationHelper;
-    private boolean internet;
     private UserService userService;
 
     /* UI references */
@@ -90,7 +89,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        Toast.makeText(this, "registerClicked", Toast.LENGTH_LONG).show();
         if(view.getId() == R.id.login_button) {
 
             InternetHelper.checkIfConnected(this);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -52,7 +53,16 @@ public class RequestService {
 
                     }
                 }
-        );
+        ){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("x-access-token", AuthService.getAuthToken(context));
+                return headers;
+            }
+        };
         queue.add(request);
 
         return null;
@@ -82,7 +92,16 @@ public class RequestService {
 
                     }
                 }
-        );
+        ){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("x-access-token", AuthService.getAuthToken(context));
+                return headers;
+            }
+        };
         queue.add(request);
 
         return null;
@@ -109,7 +128,16 @@ public class RequestService {
 
                     }
                 }
-        );
+        ){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("x-access-token", AuthService.getAuthToken(context));
+                return headers;
+            }
+        };
         queue.add(request);
 
         return null;
@@ -136,7 +164,16 @@ public class RequestService {
 
                     }
                 }
-        );
+        ){
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("x-access-token", AuthService.getAuthToken(context));
+                return headers;
+            }
+        };
         queue.add(request);
 
         return null;

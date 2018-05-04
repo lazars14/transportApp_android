@@ -111,4 +111,19 @@
     <string name="title_activity_change_password">ChangePassword</string>
     <string name="title_activity_add_request">Add Request</string>
     <string name="title_activity_change_email">Change Email</string>
+    <string name="prompt_currentEmail">Current Email</string>
+    <string name="prompt_newEmail">New Email</string>
+    <string name="changeEmail_invalid">Change email error</string>
+    <string name="prompt_oldPassword">Old Password</string>
+    <string name="prompt_newPassword">New Password</string>
+    <string name="prompt_repeatPassword">Repeat Password</string>
+    <string name="changeEmail">Change Email</string>
+    <string name="changePassword">Change Password</string>
+    <string name="changePassword_invalid">Change password error</string>
+    <string name="prompt_firstNameUpdate">Firstname</string>
+    <string name="prompt_lastNameUpdate">Lastname</string>
+    <string name="prompt_addressUpdate">Address</string>
+    <string name="prompt_phoneNumberUpdate">Phone Number</string>
+    <string name="updateInfo">Update Info</string>
+    <string name="updateInfo_invalid">Update info error</string>
 </resources>
