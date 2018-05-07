@@ -55,7 +55,7 @@ public class UpdateInfoActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         navigationHelper = new NavigationHelper(this);
-        userService = new UserService(this);
+        userService = new UserService(this, this);
 
         firstNameTextView = findViewById(R.id.firstName_etxt);
         lastNameTextView = findViewById(R.id.lastName_etxt);
@@ -111,7 +111,7 @@ public class UpdateInfoActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.update_info, menu);
+//        getMenuInflater().inflate(R.menu.update_info, menu);
         return true;
     }
 
@@ -123,9 +123,9 @@ public class UpdateInfoActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -161,14 +161,8 @@ public class UpdateInfoActivity extends AppCompatActivity
             InternetHelper.checkIfConnected(this);
 
             if(InternetHelper.internet) {
-                boolean successfull = userService.updateInfo(firstNameTextView.getText().toString(), lastNameTextView.getText().toString(),
+                userService.updateInfo(firstNameTextView.getText().toString(), lastNameTextView.getText().toString(),
                         addressTextView.getText().toString(), phoneNumberTextView.getText().toString());
-
-                if(successfull) {
-                    navigationHelper.navigateTo(MainActivity.class, this);
-                } else {
-                    Toast.makeText(this, R.string.updateInfo_invalid, Toast.LENGTH_LONG).show();
-                }
             }
 
         }

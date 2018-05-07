@@ -69,6 +69,9 @@
             android:name=".activities.ChangeEmailActivity"
             android:label="@string/title_activity_change_email"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.MapsActivity"
+            android:label="@string/title_activity_maps"></activity>
     </application>
 
 </manifest>

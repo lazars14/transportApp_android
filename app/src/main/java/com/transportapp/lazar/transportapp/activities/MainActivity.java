@@ -13,7 +13,12 @@ import android.view.View;
 
 import com.transportapp.lazar.transportapp.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import helpers.NavigationHelper;
+import model.Request;
+import services.RequestService;
 import services.UserService;
 
 public class MainActivity extends AppCompatActivity
@@ -21,9 +26,13 @@ public class MainActivity extends AppCompatActivity
 
     private NavigationHelper navigationHelper;
     private UserService userService;
+    private RequestService requestService;
+    private List<Request> requests;
 
     private void loadData() {
+        requests = new ArrayList<Request>();
 
+        requestService.getRequests(requests);
     }
 
     @Override
@@ -51,7 +60,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         navigationHelper = new NavigationHelper(this);
-        userService = new UserService(this);
+        userService = new UserService(this, this);
+        requestService = new RequestService(this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

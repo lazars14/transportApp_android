@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
@@ -34,7 +35,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText phoneNumberTextView;
     private Button registerButton;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +43,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setSupportActionBar(toolbar);
 
         navigationHelper = new NavigationHelper(this);
-        userService = new UserService(this);
+        userService = new UserService(this, this);
 
         emailTextView = findViewById(R.id.email_etxt);
         passwordTextView = findViewById(R.id.password_etxt);
@@ -98,14 +98,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         InternetHelper.checkIfConnected(getApplicationContext());
 
         if(InternetHelper.internet) {
-            User loggedUser = userService.register(emailTextView.getText().toString(), passwordTextView.getText().toString(), firstNameTextView.getText().toString(),
+            userService.register(emailTextView.getText().toString(), passwordTextView.getText().toString(), firstNameTextView.getText().toString(),
                     lastNameTextView.getText().toString(), addressTextView.getText().toString(), phoneNumberTextView.getText().toString());
-
-            if(loggedUser != null) {
-                navigationHelper.navigateTo(MainActivity.class, this);
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.register_error, Toast.LENGTH_LONG).show();
-            }
         }
     }
 }

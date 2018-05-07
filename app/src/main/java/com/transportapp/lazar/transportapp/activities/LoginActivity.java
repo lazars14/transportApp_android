@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         passwordTextView = findViewById(R.id.password);
         loginButon = findViewById(R.id.login_button);
 
-        userService = new UserService(this);
+        userService = new UserService(this, this);
 
         EditText[] editTexts = {emailTextView, passwordTextView};
 
@@ -94,13 +95,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             InternetHelper.checkIfConnected(this);
 
             if(InternetHelper.internet) {
-                User loggedUser = userService.login(emailTextView.getText().toString(), passwordTextView.getText().toString());
-
-                if(loggedUser != null) {
-                    navigationHelper.navigateTo(MainActivity.class, this);
-                } else {
-                    Toast.makeText(this, R.string.login_invalid, Toast.LENGTH_LONG).show();
-                }
+                userService.login(emailTextView.getText().toString(), passwordTextView.getText().toString());
             }
 
         } else if (view.getId() == R.id.register_button){

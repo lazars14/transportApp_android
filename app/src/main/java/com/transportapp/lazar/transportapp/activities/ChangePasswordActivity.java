@@ -54,7 +54,7 @@ public class ChangePasswordActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         navigationHelper = new NavigationHelper(this);
-        userService = new UserService(this);
+        userService = new UserService(this, this);
 
         oldPasswordTextView = findViewById(R.id.oldPassword_etxt);
         newPasswordTextView = findViewById(R.id.newPassword_etxt);
@@ -106,7 +106,7 @@ public class ChangePasswordActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.change_password, menu);
+//        getMenuInflater().inflate(R.menu.change_password, menu);
         return true;
     }
 
@@ -115,12 +115,12 @@ public class ChangePasswordActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -156,13 +156,7 @@ public class ChangePasswordActivity extends AppCompatActivity
             InternetHelper.checkIfConnected(this);
 
             if(InternetHelper.internet) {
-                boolean successfull = userService.changePassword(oldPasswordTextView.getText().toString(), newPasswordTextView.getText().toString(), repeatPasswordTextView.getText().toString());
-
-                if(successfull) {
-                    navigationHelper.navigateTo(MainActivity.class, this);
-                } else {
-                    Toast.makeText(this, R.string.changePassword_invalid, Toast.LENGTH_LONG).show();
-                }
+                userService.changePassword(oldPasswordTextView.getText().toString(), newPasswordTextView.getText().toString(), repeatPasswordTextView.getText().toString());
             }
 
         }

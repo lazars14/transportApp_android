@@ -3,6 +3,8 @@ package services;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -11,27 +13,45 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.transportapp.lazar.transportapp.R;
+import com.transportapp.lazar.transportapp.activities.LoginActivity;
+import com.transportapp.lazar.transportapp.activities.MainActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import helpers.NavigationHelper;
 import model.User;
 
 public class UserService {
 
     private Context context;
     private RequestQueue queue;
+    private AppCompatActivity currentActivity;
 
-    public UserService(Context context) {
+    private ObjectMapper mapper = new ObjectMapper();
+
+    public UserService(Context context, AppCompatActivity currentActivity) {
         this.context = context;
+        this.currentActivity = currentActivity;
         this.queue = Volley.newRequestQueue(context);
+        this.queue.start();
     }
 
-    public User login(String email, String password) {
+    public void navigateCallback() {
+        NavigationHelper navigationHelper = new NavigationHelper(context);
+        navigationHelper.navigateTo(MainActivity.class, currentActivity);
+    }
+
+    public void login(String email, String password) {
         Map<String, String>  params = new HashMap<String, String>();
         params.put("email", email);
         params.put("password", password);
@@ -43,8 +63,22 @@ public class UserService {
                 {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // response
+                        try {
+                            String token = response.getString("token");
+                            JSONObject userJson = response.getJSONObject("user");
+                            User user = mapper.readValue(userJson.toString(), User.class);
 
+                            fillUserData(user, token);
+                            navigateCallback();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (JsonParseException e) {
+                            e.printStackTrace();
+                        } catch (JsonMappingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener()
@@ -52,7 +86,7 @@ public class UserService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
-
+                        Toast.makeText(context, R.string.login_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
         ) {
@@ -66,12 +100,9 @@ public class UserService {
             }
         };
         queue.add(request);
-
-//        if successfull fillUserData
-        return null;
     }
 
-    public User register(String email, String password, String firstName, String lastName, String address, String phoneNumber) {
+    public void register(String email, String password, String firstName, String lastName, String address, String phoneNumber) {
         String firebaseToken = FirebaseInstanceId.getInstance().getToken();
 
         Map<String, String>  params = new HashMap<String, String>();
@@ -89,16 +120,29 @@ public class UserService {
                 {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // response
+                        try {
+                            String token = response.getString("token");
+                            JSONObject userJson = response.getJSONObject("user");
+                            User user = mapper.readValue(userJson.toString(), User.class);
 
-                    }
+                            fillUserData(user, token);
+                            navigateCallback();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (JsonParseException e) {
+                            e.printStackTrace();
+                        } catch (JsonMappingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }                   }
                 },
                 new Response.ErrorListener()
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
-
+                        Toast.makeText(context, R.string.register_error, Toast.LENGTH_LONG).show();
                     }
                 }
         ){
@@ -112,13 +156,9 @@ public class UserService {
             }
         };
         queue.add(request);
-
-//        if successfull fillUserData
-
-        return null;
     }
 
-    public boolean updateInfo(String firstName, String lastName, String address, String phoneNumber) {
+    public void updateInfo(String firstName, String lastName, String address, String phoneNumber) {
         Map<String, String>  params = new HashMap<String, String>();
         params.put("firstName", firstName);
         params.put("lastName", lastName);
@@ -135,8 +175,21 @@ public class UserService {
                 {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // response
+                        try {
+                            JSONObject userJson = response.getJSONObject("user");
+                            User user = mapper.readValue(userJson.toString(), User.class);
 
+                            updatePersonalInfo(user.getFirstName(), user.getLastName(), user.getAddress(), user.getPhone());
+                            navigateCallback();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (JsonParseException e) {
+                            e.printStackTrace();
+                        } catch (JsonMappingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener()
@@ -144,7 +197,7 @@ public class UserService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
-
+                        Toast.makeText(context, R.string.updateInfo_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
         ){
@@ -158,11 +211,9 @@ public class UserService {
             }
         };
         queue.add(request);
-
-        return true;
     }
 
-    public boolean changeEmail(String oldEmail, String newEmail) {
+    public void changeEmail(String oldEmail, String newEmail) {
         Map<String, String>  params = new HashMap<String, String>();
         params.put("oldEmail", oldEmail);
         params.put("newEmail", newEmail);
@@ -177,16 +228,28 @@ public class UserService {
                 {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // response
+                        try {
+                            JSONObject userJson = response.getJSONObject("user");
+                            User user = mapper.readValue(userJson.toString(), User.class);
 
-                    }
+                            updateEmail(user.getEmail());
+                            navigateCallback();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (JsonParseException e) {
+                            e.printStackTrace();
+                        } catch (JsonMappingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }                    }
                 },
                 new Response.ErrorListener()
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
-
+                        Toast.makeText(context, R.string.changeEmail_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
         ){
@@ -200,11 +263,9 @@ public class UserService {
             }
         };
         queue.add(request);
-
-        return true;
     }
 
-    public boolean changePassword(String oldPassword, String newPassword, String repeatPassword) {
+    public void changePassword(String oldPassword, String newPassword, String repeatPassword) {
         Map<String, String>  params = new HashMap<String, String>();
         params.put("oldPassword", oldPassword);
         params.put("newPassword", newPassword);
@@ -220,16 +281,27 @@ public class UserService {
                 {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // response
+                        try {
+                            JSONObject userJson = response.getJSONObject("user");
+                            User user = mapper.readValue(userJson.toString(), User.class);
 
-                    }
+                            navigateCallback();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (JsonParseException e) {
+                            e.printStackTrace();
+                        } catch (JsonMappingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }                    }
                 },
                 new Response.ErrorListener()
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
-
+                        Toast.makeText(context, R.string.changePassword_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
         ){
@@ -243,8 +315,6 @@ public class UserService {
             }
         };
         queue.add(request);
-
-        return true;
     }
 
     public void logout() {
@@ -257,12 +327,15 @@ public class UserService {
         editor.putString("user_firstName", "default_firstName");
         editor.putString("user_lastName", "default_lastName");
         editor.putString("user_address", "default_address");
-        editor.putString("user_phoneNumber", "default_phoneNumber");
+        editor.putString("user_phone", "default_phone");
         editor.putString("user_firebaseToken", "default_firebaseToken");
 
         editor.putString("user_authToken", context.getString(R.string.default_authToken));
 
-        editor.commit();
+        editor.apply();
+
+        NavigationHelper navHelper = new NavigationHelper(context);
+        navHelper.navigateTo(LoginActivity.class, currentActivity);
     }
 
     private void fillUserData(User loggedUser, String authToken) {
@@ -275,12 +348,12 @@ public class UserService {
         editor.putString("user_firstName", loggedUser.getFirstName());
         editor.putString("user_lastName", loggedUser.getLastName());
         editor.putString("user_address", loggedUser.getAddress());
-        editor.putString("user_phoneNumber", loggedUser.getPhoneNumber());
+        editor.putString("user_phone", loggedUser.getPhone());
         editor.putString("user_firebaseToken", loggedUser.getFirebaseToken());
 
         editor.putString("user_authToken", authToken);
 
-        editor.commit();
+        editor.apply();
     }
 
     private void updateEmail(String newEmail) {
@@ -290,10 +363,10 @@ public class UserService {
 
         editor.putString("user_email", newEmail);
 
-        editor.commit();
+        editor.apply();
     }
 
-    private void updatePersonalInfo(String firstName, String lastName, String address, String phoneNumber) {
+    private void updatePersonalInfo(String firstName, String lastName, String address, String phone) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         SharedPreferences.Editor editor = preferences.edit();
@@ -301,9 +374,9 @@ public class UserService {
         editor.putString("user_firstName", firstName);
         editor.putString("user_lastName", lastName);
         editor.putString("user_address", address);
-        editor.putString("user_phoneNumber", phoneNumber);
+        editor.putString("user_phone", phone);
 
-        editor.commit();
+        editor.apply();
     }
 
 

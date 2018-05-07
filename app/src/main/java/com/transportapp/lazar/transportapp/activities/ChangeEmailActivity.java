@@ -54,7 +54,7 @@ public class ChangeEmailActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         navigationHelper = new NavigationHelper(this);
-        userService = new UserService(this);
+        userService = new UserService(this, this);
 
         currentEmailTextView = findViewById(R.id.currentEmail_etxt);
         newEmailTextView = findViewById(R.id.newEmail_etxt);
@@ -105,7 +105,7 @@ public class ChangeEmailActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.change_email, menu);
+//        getMenuInflater().inflate(R.menu.change_email, menu);
         return true;
     }
 
@@ -114,12 +114,12 @@ public class ChangeEmailActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -155,13 +155,7 @@ public class ChangeEmailActivity extends AppCompatActivity
             InternetHelper.checkIfConnected(this);
 
             if(InternetHelper.internet) {
-                boolean successfull = userService.changeEmail(currentEmailTextView.getText().toString(), newEmailTextView.getText().toString());
-
-                if(successfull) {
-                    navigationHelper.navigateTo(MainActivity.class, this);
-                } else {
-                    Toast.makeText(this, R.string.changeEmail_invalid, Toast.LENGTH_LONG).show();
-                }
+                userService.changeEmail(currentEmailTextView.getText().toString(), newEmailTextView.getText().toString());
             }
 
         }
