@@ -24,6 +24,7 @@ import java.util.List;
 
 import helpers.InternetHelper;
 import model.Location;
+import services.DrawPolylineService;
 import services.GoogleMapsService;
 import services.RequestService;
 
@@ -74,13 +75,15 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
                     map.addMarker(new MarkerOptions().title(title).position(point)).showInfoWindow();
                     markersCount++;
                     if(markersCount == 2) {
-                        Document doc = mapsService.getDocument(points.get(0), points.get(1));
-                        Toast.makeText(getApplicationContext(), "this is doc " + doc, Toast.LENGTH_LONG).show();
-//                        List<LatLng> forDrawing = mapsService.getDirection(doc);
-                        polylineOptions = new PolylineOptions().width(3).color(Color.RED).geodesic(true);
-                        polylineOptions.addAll(points);
-//                        polylineOptions.addAll(forDrawing);
-                        map.addPolyline(polylineOptions);
+                        DrawPolylineService service = new DrawPolylineService(map, points, polylineOptions);
+                        service.execute();
+//                        Document doc = mapsService.getDocument(points.get(0), points.get(1));
+//                        Toast.makeText(getApplicationContext(), "this is doc " + doc, Toast.LENGTH_LONG).show();
+////                        List<LatLng> forDrawing = mapsService.getDirection(doc);
+//                        polylineOptions = new PolylineOptions().width(3).color(Color.RED).geodesic(true);
+//                        polylineOptions.addAll(points);
+////                        polylineOptions.addAll(forDrawing);
+//                        map.addPolyline(polylineOptions);
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.maxPoints_warning, Toast.LENGTH_SHORT).show();
