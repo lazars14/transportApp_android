@@ -1,11 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activities.RequestActivity"
-    tools:showIn="@layout/app_bar_request">
+    tools:showIn="@layout/app_bar_request"
+    android:id="@+id/request_content">
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/login_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"/>
+
+        <include layout="@layout/label_text_pair" android:id="@+id/start_date_info"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/end_date_info"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/price_info"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/discount_info"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/totalPrice_info"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/status_info"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/submissionDate_info"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/confirmationRequestDate_info"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/distance_info"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/accept_btn"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Accept"
+                android:onClick="onClick"/>
+
+            <Button
+                android:id="@+id/reject_btn"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Reject"
+                android:onClick="onClick"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- startDate, endDate, price, discount, status, submission date, confirmationRequestDate, distance -->
+</ScrollView>

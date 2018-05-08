@@ -61,13 +61,13 @@ public class MainActivity extends AppCompatActivity
 
         navigationHelper = new NavigationHelper(this);
         userService = new UserService(this, this);
-        requestService = new RequestService(this);
+        requestService = new RequestService(this, this, null);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                navigationHelper.navigateTo(AddRequestActivity.class, MainActivity.this);
+                navigationHelper.navigateTo(AddRequestActivity.class, MainActivity.this);
             }
         });
     }

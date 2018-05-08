@@ -1,8 +1,11 @@
 package services;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -12,7 +15,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.maps.model.LatLng;
 import com.transportapp.lazar.transportapp.R;
+import com.transportapp.lazar.transportapp.activities.AddRequestActivity;
+import com.transportapp.lazar.transportapp.activities.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,20 +30,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import helpers.NavigationHelper;
 import model.Location;
 import model.Request;
 
 public class RequestService {
+
+    private AppCompatActivity currentActivity;
+    private FragmentActivity currentFragment;
 
     private Context context;
     private RequestQueue queue;
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    public RequestService(Context context) {
+    public RequestService(Context context, AppCompatActivity currentActivity, FragmentActivity currentFragment) {
         this.context = context;
         this.queue = Volley.newRequestQueue(context);
         this.queue.start();
+        this.currentActivity = currentActivity;
+        this.currentFragment = currentFragment;
+    }
+
+    public void navigateCallback() {
+        Intent intent = new Intent(context, MainActivity.class);
+        if(currentActivity != null) currentActivity.startActivity(intent);
+        else currentFragment.startActivity(intent);
     }
 
     public Request[] getRequests(final List<Request> requests) {
@@ -85,15 +103,15 @@ public class RequestService {
         return null;
     }
 
-    public Request addRequest(Location startLocation, Location endLocation) {
+    public Request addRequest(LatLng startLocation, LatLng endLocation) {
         JSONObject params = new JSONObject();
         JSONObject startLocationJson = new JSONObject();
         JSONObject endLocationJson = new JSONObject();
         try {
-            startLocationJson.put("lat", startLocation.getLat());
-            startLocationJson.put("lng", startLocation.getLng());
-            endLocationJson.put("lat", endLocation.getLat());
-            endLocationJson.put("lng", endLocation.getLng());
+            startLocationJson.put("lat", startLocation.latitude);
+            startLocationJson.put("lng", startLocation.longitude);
+            endLocationJson.put("lat", endLocation.latitude);
+            endLocationJson.put("lng", endLocation.longitude);
             params.put("startLocation", startLocationJson);
             params.put("endLocation", endLocationJson);
         } catch (JSONException e) {
@@ -107,8 +125,7 @@ public class RequestService {
                 {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // response
-
+                        navigateCallback();
                     }
                 },
                 new Response.ErrorListener()
@@ -143,8 +160,7 @@ public class RequestService {
                 {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // response
-
+                        navigateCallback();
                     }
                 },
                 new Response.ErrorListener()
@@ -179,8 +195,7 @@ public class RequestService {
                 {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // response
-
+                        navigateCallback();
                     }
                 },
                 new Response.ErrorListener()

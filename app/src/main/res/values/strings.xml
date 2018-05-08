@@ -131,4 +131,5 @@
     <string name="addRequest_invalid">Add Request error</string>
     <string name="acceptRequest_invalid">Accept Request error</string>
     <string name="rejectRequest_invalid">Reject Request error</string>
+    <string name="maxPoints_warning">You can put only two locations!</string>
 </resources>
