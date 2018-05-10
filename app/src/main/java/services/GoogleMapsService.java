@@ -35,7 +35,6 @@ public class GoogleMapsService {
 
         try {
             Response response = client.newCall(request).execute();
-            Log.d("Talambasko", response.toString());
             InputStream in = response.body().byteStream();
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
                     .newDocumentBuilder();

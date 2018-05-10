@@ -6,32 +6,43 @@
     android:gravity="center"
     tools:context=".activities.AddRequestActivity">
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
-
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"/>
+
+    <View
+        android:id="@+id/load_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/loading_background"
+        android:visibility="gone"
+        />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:padding="5dp">
 
         <Button
             android:id="@+id/add_btn"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Add"
+            android:text="Ok"
             android:onClick="onClick"/>
 
         <Button
@@ -39,6 +50,15 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Reset"
+            android:onClick="onClick"/>
+
+        <ImageButton
+            android:id="@+id/help_btn"
+            android:src="@drawable/help"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
             android:onClick="onClick"/>
 
     </LinearLayout>

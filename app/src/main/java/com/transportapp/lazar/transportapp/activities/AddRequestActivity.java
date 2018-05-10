@@ -1,9 +1,13 @@
 package com.transportapp.lazar.transportapp.activities;
 
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,6 +26,7 @@ import org.w3c.dom.Document;
 import java.util.ArrayList;
 import java.util.List;
 
+import helpers.DialogHelper;
 import helpers.InternetHelper;
 import model.Location;
 import services.DrawPolylineService;
@@ -34,6 +39,8 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
     private GoogleMapsService mapsService;
 
     private GoogleMap map;
+    private View loadingBackground;
+    private ProgressBar progressBar;
     private int markersCount = 0;
     private List<LatLng> points = new ArrayList<LatLng>();
     private Polyline polyline;
@@ -50,6 +57,9 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
 
         requestService = new RequestService(this, null, this);
         mapsService = new GoogleMapsService();
+
+        loadingBackground = findViewById(R.id.load_background);
+        progressBar = findViewById(R.id.progress_bar);
     }
 
     @Override
@@ -68,22 +78,14 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void onMapClick(LatLng point) {
                 // TODO Auto-generated method stub
-//                map.clear();
                 if(markersCount < 2) {
                     String title = (markersCount == 0) ? "Start" : "End";
                     points.add(point);
                     map.addMarker(new MarkerOptions().title(title).position(point)).showInfoWindow();
                     markersCount++;
                     if(markersCount == 2) {
-                        DrawPolylineService service = new DrawPolylineService(map, points, polylineOptions);
+                        DrawPolylineService service = new DrawPolylineService(map, points, polylineOptions, loadingBackground, progressBar, AddRequestActivity.this);
                         service.execute();
-//                        Document doc = mapsService.getDocument(points.get(0), points.get(1));
-//                        Toast.makeText(getApplicationContext(), "this is doc " + doc, Toast.LENGTH_LONG).show();
-////                        List<LatLng> forDrawing = mapsService.getDirection(doc);
-//                        polylineOptions = new PolylineOptions().width(3).color(Color.RED).geodesic(true);
-//                        polylineOptions.addAll(points);
-////                        polylineOptions.addAll(forDrawing);
-//                        map.addPolyline(polylineOptions);
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.maxPoints_warning, Toast.LENGTH_SHORT).show();
@@ -91,10 +93,11 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        float zoom = (float) 12.00;
+        LatLng start = new LatLng(45.2671, 19.8335);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(start, zoom));
+
+        showInstructionsToast();
     }
 
     @Override
@@ -105,6 +108,14 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
             map.clear();
             markersCount = 0;
             points.clear();
+        } else if (view.getId() == R.id.help_btn) {
+            DialogHelper.showDialogInfo(this, "Help", getString(R.string.addRequest_instructions));
         }
+    }
+
+    private void showInstructionsToast() {
+        Toast toast = Toast.makeText(getApplicationContext(), R.string.addRequest_instructions, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP, 0, 50);
+        toast.show();
     }
 }
