@@ -14,29 +14,21 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        showNotification(remoteMessage.getData().get("message"));
+        showNotification(remoteMessage.getData().get("message"), remoteMessage.getData().get("requestId"));
     }
 
-    private void showNotification(String message) {
+    private void showNotification(String message, String requestId) {
         Intent i = new Intent(this, RequestActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        // to do
-        String[] itemInfo = message.split("\\|");
-
-        i.putExtra("id", itemInfo[0]);
-        i.putExtra("name", itemInfo[1]);
-        i.putExtra("description", itemInfo[2]);
-        i.putExtra("image", itemInfo[3]);
-
-        i.putExtra("bids", true);
+        i.putExtra("requestId", requestId);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setAutoCancel(true)
-                .setContentTitle("The Hammer")
-                .setContentText("Your bid for item " + itemInfo[1] + " has been passed!")
+                .setContentTitle("Transportero")
+                .setContentText(message)
                 .setSmallIcon(R.drawable.logo)
                 .setContentIntent(pendingIntent);
 
