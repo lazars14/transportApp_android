@@ -8,6 +8,7 @@ public class Constants {
         "Status: ", "Submission Date: ", "Confirmation Date: ", "Distance: ", "Total Cost: "};
 
     public static final String SLASH = "/";
+    public static final String SEPARATOR = "|";
 
     public static final HashMap<Integer, String> statuses = new HashMap<Integer, String>();
 

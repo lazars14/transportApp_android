@@ -74,7 +74,7 @@ public class RequestActivity extends AppCompatActivity
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            request_id = bundle.getString("request_id");
+            request_id = bundle.getString("id");
 
             fillRequestInfo(bundle);
         }
@@ -87,14 +87,14 @@ public class RequestActivity extends AppCompatActivity
         String startDateStrTransformed = null;
         String endDateStrTransformed = null;
 
-        String start_dateStr = bundle.getString("start_date");
+        String start_dateStr = bundle.getString("startDate");
         if(start_dateStr.equals("") || start_dateStr.equals(null) || start_dateStr.equals("null")) {
             startDate = null;
             startDateStrTransformed = SLASH;
             endDateStrTransformed = SLASH;
         } else {
-            startDate = DateHelper.stringToDate(bundle.getString("start_date"));
-            endDate = DateHelper.stringToDate(bundle.getString("end_date"));
+            startDate = DateHelper.stringToDate(bundle.getString("startDate"));
+            endDate = DateHelper.stringToDate(bundle.getString("endDate"));
 
             startDateStrTransformed = DateHelper.dateToString(startDate);
             endDateStrTransformed = DateHelper.dateToString(endDate);
@@ -108,7 +108,7 @@ public class RequestActivity extends AppCompatActivity
         ValuePairViewHelper.setLabelValuePair(parentView, R.id.status_info, Constants.REQUEST_INFO_LABELS[4], statusString);
 
         String confirmationDateStrTransformed = SLASH;
-        String confirmationDateStr = bundle.getString("confirmationDate");
+        String confirmationDateStr = bundle.getString("confirmationRequestDate");
         if(!confirmationDateStr.equals("") || !confirmationDateStr.equals(null) || !confirmationDateStr.equals("null")) {
             Date confirmationDate = DateHelper.stringToDate(confirmationDateStr);
             confirmationDateStrTransformed = DateHelper.dateToString(confirmationDate);
@@ -119,12 +119,8 @@ public class RequestActivity extends AppCompatActivity
         Double distance = bundle.getDouble("distance");
         ValuePairViewHelper.setLabelValuePair(parentView, R.id.distance_info, Constants.REQUEST_INFO_LABELS[7], String.valueOf(distance));
 
-        Double priceWithoutDiscount = distance * 5;
-        Double discount = bundle.getDouble("discount");
-        Double priceWithDiscount = priceWithoutDiscount * (1 - discount / 100);
-        ValuePairViewHelper.setLabelValuePair(parentView, R.id.price_info, Constants.REQUEST_INFO_LABELS[2], String.valueOf(priceWithoutDiscount));
-        ValuePairViewHelper.setLabelValuePair(parentView, R.id.discount_info, Constants.REQUEST_INFO_LABELS[3], String.valueOf(discount) + "%");
-        ValuePairViewHelper.setLabelValuePair(parentView, R.id.price_info, Constants.REQUEST_INFO_LABELS[8], String.valueOf(priceWithDiscount));
+        ValuePairViewHelper.setLabelValuePair(parentView, R.id.price_info, Constants.REQUEST_INFO_LABELS[2], String.valueOf(bundle.getDouble("price")));
+        ValuePairViewHelper.setLabelValuePair(parentView, R.id.discount_info, Constants.REQUEST_INFO_LABELS[3], String.valueOf(bundle.getDouble("discount")) + "%");
 
         Date submissionDate = DateHelper.stringToDate(bundle.getString("submissionDate"));
         ValuePairViewHelper.setLabelValuePair(parentView, R.id.submissionDate_info, Constants.REQUEST_INFO_LABELS[5], DateHelper.dateToString(submissionDate));

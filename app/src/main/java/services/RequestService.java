@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import adapters.RequestAdapter;
 import helpers.NavigationHelper;
 import model.Location;
 import model.Request;
@@ -75,6 +77,9 @@ public class RequestService {
                             for (Request r : results) {
                                 requests.add(r);
                             }
+
+                            // set recycler view
+//                            recyclerView.setAdapter(adapter);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

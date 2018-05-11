@@ -25,7 +25,6 @@
         <include layout="@layout/label_text_pair" android:id="@+id/end_date_info"/>
         <include layout="@layout/label_text_pair" android:id="@+id/price_info"/>
         <include layout="@layout/label_text_pair" android:id="@+id/discount_info"/>
-        <include layout="@layout/label_text_pair" android:id="@+id/totalPrice_info"/>
         <include layout="@layout/label_text_pair" android:id="@+id/status_info"/>
         <include layout="@layout/label_text_pair" android:id="@+id/submissionDate_info"/>
         <include layout="@layout/label_text_pair" android:id="@+id/confirmationRequestDate_info"/>
