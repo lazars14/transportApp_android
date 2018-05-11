@@ -211,7 +211,8 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
     private void getCurrentLocation() {
         boolean hasPermission = checkLocationPermission();
         if(hasPermission) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            Criteria criteria = new Criteria();
+            locationManager.requestSingleUpdate(criteria, locationListener, null);
         } else {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
@@ -232,7 +233,8 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
 
         if(requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                Criteria criteria = null;
+                locationManager.requestSingleUpdate(criteria, locationListener, null);
             } else {
                 // do nothing
             }
