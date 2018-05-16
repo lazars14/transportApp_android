@@ -191,7 +191,16 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.add_btn) {
-            requestService.addRequest(points.get(0), points.get(1));
+            if(points.size() == 2) {
+                double startLocationLat = Double.parseDouble(String.format("%.4f", points.get(0).latitude));
+                double startLocationLng = Double.parseDouble(String.format("%.4f", points.get(0).longitude));
+                double endLocationLat = Double.parseDouble(String.format("%.4f", points.get(1).latitude));
+                double endLocationLng = Double.parseDouble(String.format("%.4f", points.get(1).longitude));
+                // for testing
+//                requestService.addRequest(points.get(0), points.get(1));
+            } else {
+                Toast.makeText(this, "You must select two locations!", Toast.LENGTH_LONG).show();
+            }
         } else if (view.getId() == R.id.reset_btn) {
             map.clear();
             markersCount = 0;
