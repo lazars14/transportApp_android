@@ -69,7 +69,8 @@
                     android:text="@string/login"
                     android:textStyle="bold"
                     android:enabled="false"
-                    android:onClick="onClick"/>
+                    android:onClick="onClick"
+                    android:background="@color/button_background"/>
 
                 <Button
                     android:id="@+id/register_button"
@@ -79,7 +80,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/register"
                     android:textStyle="bold"
-                    android:onClick="onClick"/>
+                    android:onClick="onClick"
+                    android:background="@color/button_background"/>
 
             </RelativeLayout>
 

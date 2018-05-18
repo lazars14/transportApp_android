@@ -1,31 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center">
+    card_view:contentPadding="10dp">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_view"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        card_view:contentPadding="5dp">
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:background="@color/cardview_shadow_start_color">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
+        <include layout="@layout/label_text_pair" android:id="@+id/start_location"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/end_location"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/start_date"/>
+        <include layout="@layout/label_text_pair" android:id="@+id/end_date"/>
 
-            <include layout="@layout/label_text_pair" android:id="@+id/start_location"/>
-            <include layout="@layout/label_text_pair" android:id="@+id/end_location"/>
-            <include layout="@layout/label_text_pair" android:id="@+id/start_date"/>
-            <include layout="@layout/label_text_pair" android:id="@+id/end_date"/>
+    </LinearLayout>
 
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
-
-</LinearLayout>
+</android.support.v7.widget.CardView>

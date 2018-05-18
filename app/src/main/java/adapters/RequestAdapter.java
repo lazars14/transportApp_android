@@ -61,35 +61,39 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private Request request;
-//        private TextView startLocation;
-//        private TextView endLocation;
-//        private TextView startDate;
-//        private TextView endDate;
 
         public ViewHolder(View itemView) {
             super(itemView);
-
-//            startLocation = itemView.findViewById(R.id.start_location);
-//            endLocation = itemView.findViewById(R.id.end_location);
-//            startDate = itemView.findViewById(R.id.start_date);
-//            endDate = itemView.findViewById(R.id.end_date);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, RequestActivity.class);
 
+                    long startDate = 0;
+                    long endDate = 0;
+                    long confirmationDate = 0;
+
                     intent.putExtra("id", request.getId());
-                    intent.putExtra("startLocation", request.getStartLocation().getLat() + Constants.SEPARATOR + request.getStartLocation().getLng());
-                    intent.putExtra("endLocation", request.getEndLocation().getLat() + Constants.SEPARATOR + request.getEndLocation().getLng());
-                    intent.putExtra("startDate", request.getStartDate().getTime());
-                    intent.putExtra("endDate", request.getEndDate().getTime());
+                    intent.putExtra("startLocationLat", request.getStartLocation().getLat());
+                    intent.putExtra("startLocationLng", request.getStartLocation().getLng());
+                    intent.putExtra("endLocationLat", request.getEndLocation().getLat());
+                    intent.putExtra("endLocationLng", request.getEndLocation().getLng());
+                    if (request.getStartDate() != null) {
+                        startDate = request.getStartDate().getTime();
+                        endDate = request.getEndDate().getTime();
+                    }
+                    intent.putExtra("startDate", startDate);
+                    intent.putExtra("endDate", endDate);
                     intent.putExtra("price", request.getPrice());
                     intent.putExtra("discount", request.getDiscount());
                     intent.putExtra("status", request.getStatus());
                     intent.putExtra("destinationId", request.getDestinationId());
                     intent.putExtra("submissionDate", request.getSubmissionDate().getTime());
-                    intent.putExtra("confirmationRequestDate", request.getConfirmationRequestDate().getTime());
+                    if(request.getConfirmationRequestDate() != null) {
+                        confirmationDate = request.getConfirmationRequestDate().getTime();
+                    }
+                    intent.putExtra("confirmationRequestDate", confirmationDate);
                     intent.putExtra("userId", request.getUserId());
                     intent.putExtra("destinationOrder", request.getDestinationOrder());
                     intent.putExtra("distance", request.getDistance());

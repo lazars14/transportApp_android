@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="splash_screen_text">Transportero</string>
     <string name="turn_on_internet">Turn on internet!</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">My Requests</string>
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
@@ -24,7 +24,6 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="title_activity_update_info">Settings</string>
 
     <!-- Strings related to Settings -->
 
@@ -105,11 +104,11 @@
     <string name="prompt_address">Address (optional)</string>
     <string name="register_error">Register error</string>
     <string name="default_authToken">default_authToken</string>
-    <string name="title_activity_main2">Main2Activity</string>
     <string name="prompt_phoneNumber">Phone Number (optional)</string>
-    <string name="title_activity_request">RequestActivity</string>
-    <string name="title_activity_change_password">ChangePassword</string>
+    <string name="title_activity_request">Request</string>
+    <string name="title_activity_change_password">Change Password</string>
     <string name="title_activity_add_request">Add Request</string>
+    <string name="title_activity_update_info">Update Info</string>
     <string name="title_activity_change_email">Change Email</string>
     <string name="prompt_currentEmail">Current Email</string>
     <string name="prompt_newEmail">New Email</string>
@@ -133,4 +132,5 @@
     <string name="rejectRequest_invalid">Reject Request error</string>
     <string name="maxPoints_warning">You can put only two locations!</string>
     <string name="addRequest_instructions">Tap the map to set the markers\nYou can set max 2 markers (start and end location)\nPress Reset to reset the markers\nPress Ok to create the request</string>
+    <string name="ok">Ok</string>
 </resources>

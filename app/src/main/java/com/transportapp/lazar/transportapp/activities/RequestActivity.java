@@ -3,6 +3,8 @@ package com.transportapp.lazar.transportapp.activities;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,10 +15,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -71,13 +76,17 @@ public class RequestActivity extends AppCompatActivity
         acceptBtn = findViewById(R.id.accept_btn);
         rejectBtn = findViewById(R.id.reject_btn);
 
-
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             request_id = bundle.getString("id");
 
             fillRequestInfo(bundle);
         }
+
+        SupportMapFragment mapFragment = (SupportMapFragment)
+                getSupportFragmentManager().findFragmentById(R.id.map);
+        // This calls OnMapReady(..). (Asynchronously)
+        mapFragment.getMapAsync(this);
     }
 
     private void fillRequestInfo(Bundle bundle) {
@@ -87,14 +96,14 @@ public class RequestActivity extends AppCompatActivity
         String startDateStrTransformed = null;
         String endDateStrTransformed = null;
 
-        String start_dateStr = bundle.getString("startDate");
-        if(start_dateStr.equals("") || start_dateStr.equals(null) || start_dateStr.equals("null")) {
+        long start_dateLong = bundle.getLong("startDate");
+        if(start_dateLong == 0) {
             startDate = null;
             startDateStrTransformed = SLASH;
             endDateStrTransformed = SLASH;
         } else {
-            startDate = DateHelper.stringToDate(bundle.getString("startDate"));
-            endDate = DateHelper.stringToDate(bundle.getString("endDate"));
+            startDate = new Date(start_dateLong);
+            endDate = new Date(bundle.getLong("endDate"));
 
             startDateStrTransformed = DateHelper.dateToString(startDate);
             endDateStrTransformed = DateHelper.dateToString(endDate);
@@ -108,21 +117,20 @@ public class RequestActivity extends AppCompatActivity
         ValuePairViewHelper.setLabelValuePair(parentView, R.id.status_info, Constants.REQUEST_INFO_LABELS[4], statusString);
 
         String confirmationDateStrTransformed = SLASH;
-        String confirmationDateStr = bundle.getString("confirmationRequestDate");
-        if(!confirmationDateStr.equals("") || !confirmationDateStr.equals(null) || !confirmationDateStr.equals("null")) {
-            Date confirmationDate = DateHelper.stringToDate(confirmationDateStr);
+        long confirmationDateLong = bundle.getLong("confirmationRequestDate");
+        if(confirmationDateLong != 0) {
+            Date confirmationDate = new Date(confirmationDateLong);
             confirmationDateStrTransformed = DateHelper.dateToString(confirmationDate);
         }
-
         ValuePairViewHelper.setLabelValuePair(parentView, R.id.confirmationRequestDate_info, Constants.REQUEST_INFO_LABELS[6], confirmationDateStrTransformed);
 
-        Double distance = bundle.getDouble("distance");
-        ValuePairViewHelper.setLabelValuePair(parentView, R.id.distance_info, Constants.REQUEST_INFO_LABELS[7], String.valueOf(distance));
+        float distance = bundle.getFloat("distance");
+        ValuePairViewHelper.setLabelValuePair(parentView, R.id.distance_info, Constants.REQUEST_INFO_LABELS[7], String.valueOf(distance) + " km");
 
-        ValuePairViewHelper.setLabelValuePair(parentView, R.id.price_info, Constants.REQUEST_INFO_LABELS[2], String.valueOf(bundle.getDouble("price")));
-        ValuePairViewHelper.setLabelValuePair(parentView, R.id.discount_info, Constants.REQUEST_INFO_LABELS[3], String.valueOf(bundle.getDouble("discount")) + "%");
+        ValuePairViewHelper.setLabelValuePair(parentView, R.id.price_info, Constants.REQUEST_INFO_LABELS[2], String.valueOf(bundle.getFloat("price")) + " DIN");
+        ValuePairViewHelper.setLabelValuePair(parentView, R.id.discount_info, Constants.REQUEST_INFO_LABELS[3], String.valueOf(bundle.getFloat("discount")) + "%");
 
-        Date submissionDate = DateHelper.stringToDate(bundle.getString("submissionDate"));
+        Date submissionDate = new Date(bundle.getLong("submissionDate"));
         ValuePairViewHelper.setLabelValuePair(parentView, R.id.submissionDate_info, Constants.REQUEST_INFO_LABELS[5], DateHelper.dateToString(submissionDate));
 
         if(startDate == null) {
@@ -138,14 +146,18 @@ public class RequestActivity extends AppCompatActivity
 
         Bundle bundle = getIntent().getExtras();
 
-        String[] keys = new String[]{"start_location_lat", "start_location_lng", "end_location_lat", "end_location_lng"};
+        LatLng startLocation = new LatLng(bundle.getDouble("startLocationLat"), bundle.getDouble("startLocationLng"));
+        LatLng endLocation = new LatLng(bundle.getDouble("endLocationLat"), bundle.getDouble("endLocationLng"));
 
-        LatLng startLocation = new LatLng(bundle.getDouble("start_location_lat"), bundle.getDouble("start_location_lng"));
-        LatLng endLocation = new LatLng(bundle.getDouble("end_location_lat"), bundle.getDouble("end_location_lng"));
+        Toast.makeText(this, "mapa spremna", Toast.LENGTH_LONG).show();
 
+        Log.d("startLocation ", "start location is: " + startLocation.latitude + ", " + startLocation.longitude);
+        Log.d("endLocation ", "end location is: " + endLocation.latitude + ", " + endLocation.longitude);
+
+        float zoom = (float) 9.00;
         map.addMarker(new MarkerOptions().position(startLocation).title("Start")).showInfoWindow();
         map.addMarker(new MarkerOptions().position(endLocation).title("End")).showInfoWindow();
-        map.moveCamera(CameraUpdateFactory.newLatLng(startLocation));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation, zoom));
 
         // draw direction
     }
