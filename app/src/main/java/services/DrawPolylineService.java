@@ -33,10 +33,12 @@ public class DrawPolylineService extends AsyncTask<Void, Void, Void> {
     private Context context;
 
     private Document doc;
-    private String distance;
-    private String duration;
+    private double distance;
+    private int duration;
 
-    public DrawPolylineService(GoogleMap googleMap, List<LatLng> points, PolylineOptions polylineOptions, View loadBackground, ProgressBar progressBar, Context context){
+    public DrawPolylineService(GoogleMap googleMap, List<LatLng> points,
+                               PolylineOptions polylineOptions, View loadBackground,
+                               ProgressBar progressBar, Context context){
         this.mapsService = new GoogleMapsService();
         this.googleMap = googleMap;
         this.points = points;
@@ -58,8 +60,8 @@ public class DrawPolylineService extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         doc = mapsService.getDocument(points.get(0), points.get(1));
 
-        distance = mapsService.getDistanceText(doc);
-        duration = mapsService.getDurationText(doc);
+        distance = mapsService.getDistanceValue(doc);
+        duration = mapsService.getDurationValue(doc);
 
         return null;
     }
@@ -68,21 +70,35 @@ public class DrawPolylineService extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
 
+        boolean valid = true;
         String bestRouteInfo = "";
-        if(duration.equals("0")) {
+        if(duration == -1) {
             // bad request
             bestRouteInfo = "Bad Request! Try again and put the markers on the road";
+            valid = false;
         } else {
-            distance = String.valueOf(Double.parseDouble(distance) / 1000);
-            bestRouteInfo = "Optimal Distance: " + distance + "km\n" + "Optimal Time: " + duration;
+            String distanceString = String.valueOf(Math.round((distance) / 1000));
+            String durationString = String.valueOf(duration);
+            if(duration > 60) {
+                int hours = duration / 60;
+                int minutes = duration - hours * 60;
+                durationString = String.valueOf(hours) + "h " + String.valueOf(minutes) + "min";
+            } else durationString += "min";
+
+            bestRouteInfo = "Optimal Distance: " + distanceString + "km\n" + "Optimal Time: " + durationString;
         }
 
         DialogHelper.showDialogInfo(context, "Optimal Route Info", bestRouteInfo);
 
-        List<LatLng> forDrawing = mapsService.getDirection(doc);
-        polylineOptions = new PolylineOptions().width(3).color(Color.RED).geodesic(true);
-        polylineOptions.addAll(forDrawing);
-        googleMap.addPolyline(polylineOptions);
+        if(!valid) {
+            googleMap.clear();
+            points.clear();
+        } else {
+            List<LatLng> forDrawing = mapsService.getDirection(doc);
+            polylineOptions = new PolylineOptions().width(3).color(Color.RED).geodesic(true);
+            polylineOptions.addAll(forDrawing);
+            googleMap.addPolyline(polylineOptions);
+        }
 
         loadBackground.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);

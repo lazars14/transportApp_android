@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -55,7 +56,6 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
     private GoogleMap map;
     private View loadingBackground;
     private ProgressBar progressBar;
-    private int markersCount = 0;
     private List<LatLng> points = new ArrayList<LatLng>();
     private Polyline polyline;
     private PolylineOptions polylineOptions;
@@ -144,12 +144,11 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void onMapClick(LatLng point) {
                 // TODO Auto-generated method stub
-                if (markersCount < 2) {
-                    String title = (markersCount == 0) ? "Start" : "End";
+                if (points.size() < 2) {
+                    String title = (points.size() == 0) ? "Start" : "End";
                     points.add(point);
                     map.addMarker(new MarkerOptions().title(title).position(point)).showInfoWindow();
-                    markersCount++;
-                    if (markersCount == 2) {
+                    if (points.size() == 2) {
                         DrawPolylineService service = new DrawPolylineService(map, points, polylineOptions, loadingBackground, progressBar, AddRequestActivity.this);
                         service.execute();
                     }
@@ -203,7 +202,6 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
             }
         } else if (view.getId() == R.id.reset_btn) {
             map.clear();
-            markersCount = 0;
             points.clear();
         } else if (view.getId() == R.id.help_btn) {
             DialogHelper.showDialogInfo(this, "Help", getString(R.string.addRequest_instructions));
@@ -220,7 +218,9 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
     private void getCurrentLocation() {
         boolean hasPermission = checkLocationPermission();
         if(hasPermission) {
+            Log.v("ADDREQUESTACTIVITY", "YESSS");
             Criteria criteria = new Criteria();
+            criteria.setAccuracy(1);
             locationManager.requestSingleUpdate(criteria, locationListener, null);
         } else {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);

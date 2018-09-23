@@ -31,7 +31,7 @@ public class GoogleMapsService {
                 + "origin=" + start.latitude + "," + start.longitude
                 + "&destination=" + end.latitude + "," + end.longitude
                 + "&sensor=false&units=metric&mode=driving";
-        Log.d("url", url);
+        Log.v("DURATION", url);
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -53,12 +53,16 @@ public class GoogleMapsService {
 
     public String getDurationText(Document doc) {
         try {
-
+            Log.v("DURATION TEST", "doc is " + doc.toString());
             NodeList nl1 = doc.getElementsByTagName("duration");
+            Log.v("DURATION TEST", "nl1 is " + nl1.toString());
             Node node1 = nl1.item(0);
+            Log.v("DURATION TEST", "node1 is " + node1.toString());
             NodeList nl2 = node1.getChildNodes();
+            Log.v("DURATION TEST", nl2.toString());
             Node node2 = nl2.item(getNodeIndex(nl2, "text"));
-            Log.i("DurationText", node2.getTextContent());
+            Log.v("DURATION TEST", "node2 is " + node2.toString());
+            Log.i("DURATION TEST", node2.getTextContent());
             return node2.getTextContent();
         } catch (Exception e) {
             return "0";
@@ -66,13 +70,20 @@ public class GoogleMapsService {
     }
 
     public int getDurationValue(Document doc) {
+        int totalDuration = 0;
         try {
-            NodeList nl1 = doc.getElementsByTagName("duration");
-            Node node1 = nl1.item(0);
-            NodeList nl2 = node1.getChildNodes();
-            Node node2 = nl2.item(getNodeIndex(nl2, "value"));
-            Log.i("DurationValue", node2.getTextContent());
-            return Integer.parseInt(node2.getTextContent());
+            NodeList statusNodeList = doc.getElementsByTagName("status");
+            if(!statusNodeList.item(0).getTextContent().equals("OK")) return -1;
+            NodeList durationNodeList = doc.getElementsByTagName("duration");
+            if(durationNodeList.getLength() == 0) return -1;
+            for (int i = 0; i < durationNodeList.getLength(); i++) {
+                Node durationNode = durationNodeList.item(i);
+                NodeList durationNodeChildNodes = durationNode.getChildNodes();
+                Node valueNode = durationNodeChildNodes.item(getNodeIndex(durationNodeChildNodes, "value"));
+                totalDuration += Integer.parseInt(valueNode.getTextContent());
+            }
+
+            return totalDuration / 60;
         } catch (Exception e) {
             return -1;
         }
@@ -94,15 +105,21 @@ public class GoogleMapsService {
         }
     }
 
-    public int getDistanceValue(Document doc) {
+    public double getDistanceValue(Document doc) {
+        double totalDistance = 0;
         try {
-            NodeList nl1 = doc.getElementsByTagName("distance");
-            Node node1 = null;
-            node1 = nl1.item(nl1.getLength() - 1);
-            NodeList nl2 = node1.getChildNodes();
-            Node node2 = nl2.item(getNodeIndex(nl2, "value"));
-            Log.i("DistanceValue", node2.getTextContent());
-            return Integer.parseInt(node2.getTextContent());
+            NodeList statusNodeList = doc.getElementsByTagName("status");
+            if(!statusNodeList.item(0).getTextContent().equals("OK")) return -1;
+            NodeList distanceNodeList = doc.getElementsByTagName("distance");
+            if(distanceNodeList.getLength() == 0) return -1;
+            for (int i = 0; i < distanceNodeList.getLength(); i++) {
+                Node distanceNode = distanceNodeList.item(i);
+                NodeList distanceNodeChildNodes = distanceNode.getChildNodes();
+                Node valueNode = distanceNodeChildNodes.item(getNodeIndex(distanceNodeChildNodes, "value"));
+                totalDistance += Integer.parseInt(valueNode.getTextContent());
+            }
+
+            return totalDistance;
         } catch (Exception e) {
             return -1;
         }
