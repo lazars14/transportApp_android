@@ -33,7 +33,8 @@
                     android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -51,7 +52,8 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -67,7 +69,8 @@
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:inputType="textPersonName"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -83,7 +86,8 @@
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:inputType="textPersonName"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -98,7 +102,8 @@
                     android:hint="@string/prompt_address"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:inputType="text"
-                    android:maxLines="2"/>
+                    android:maxLines="2"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -113,7 +118,8 @@
                     android:hint="@string/prompt_phoneNumber"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:inputType="phone"
-                    android:maxLines="1"/>
+                    android:maxLines="1"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 

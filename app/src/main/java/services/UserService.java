@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -31,6 +32,8 @@ import java.util.Map;
 import helpers.NavigationHelper;
 import model.User;
 
+import static utils.Constants.API_URL;
+
 public class UserService {
 
     private Context context;
@@ -56,7 +59,7 @@ public class UserService {
         params.put("email", email);
         params.put("password", password);
 
-        String url = "apiUrl";
+        String url = API_URL + "/user/login";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url,
                 new JSONObject(params),
                 new Response.Listener<JSONObject>()
@@ -86,6 +89,7 @@ public class UserService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
+                        Log.v("LOGIN", error.getMessage());
                         Toast.makeText(context, R.string.login_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
@@ -95,7 +99,6 @@ public class UserService {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 headers.put("Content-Type", "application/json; charset=utf-8");
-                headers.put("x-access-token", AuthService.getAuthToken(context));
                 return headers;
             }
         };
@@ -112,8 +115,9 @@ public class UserService {
         params.put("lastName", lastName);
         params.put("address", address);
         params.put("phone", phoneNumber);
+        params.put("firebaseToken", firebaseToken);
 
-        String url = "apiUrl";
+        String url = API_URL + "/user/register";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url,
                 new JSONObject(params),
                 new Response.Listener<JSONObject>()
@@ -142,6 +146,7 @@ public class UserService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
+                        Log.v("REGISTER", error.getMessage());
                         Toast.makeText(context, R.string.register_error, Toast.LENGTH_LONG).show();
                     }
                 }
@@ -151,7 +156,6 @@ public class UserService {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
                 headers.put("Content-Type", "application/json; charset=utf-8");
-                headers.put("x-access-token", AuthService.getAuthToken(context));
                 return headers;
             }
         };
@@ -168,7 +172,7 @@ public class UserService {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String userId = preferences.getString("user_id", "default_userId");
 
-        String url = "apiUrl/" + userId;
+        String url = API_URL + "/user/" + userId;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,
                 new JSONObject(params),
                 new Response.Listener<JSONObject>()
@@ -197,6 +201,7 @@ public class UserService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
+                        Log.v("UPDATEINFO", error.getMessage());
                         Toast.makeText(context, R.string.updateInfo_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
@@ -221,7 +226,7 @@ public class UserService {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String userId = preferences.getString("user_id", "default_userId");
 
-        String url = "apiUrl/" + userId;
+        String url = API_URL + "/user/" + userId + "/changeEmail";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,
                 new JSONObject(params),
                 new Response.Listener<JSONObject>()
@@ -249,6 +254,7 @@ public class UserService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
+                        Log.v("UPDATEEMAIL", error.getMessage());
                         Toast.makeText(context, R.string.changeEmail_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
@@ -274,7 +280,7 @@ public class UserService {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String userId = preferences.getString("user_id", "default_userId");
 
-        String url = "apiUrl/" + userId;
+        String url = API_URL + "/user/" + userId + "/changePassword";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,
                 new JSONObject(params),
                 new Response.Listener<JSONObject>()
@@ -301,6 +307,7 @@ public class UserService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
+                        Log.v("CHANGEPASSWORD", error.getMessage());
                         Toast.makeText(context, R.string.changePassword_invalid, Toast.LENGTH_LONG).show();
                     }
                 }

@@ -34,7 +34,8 @@
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:inputType="textPersonName"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -50,7 +51,8 @@
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:inputType="textPersonName"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -65,7 +67,8 @@
                     android:hint="@string/prompt_addressUpdate"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:inputType="text"
-                    android:maxLines="2"/>
+                    android:maxLines="2"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -80,7 +83,8 @@
                     android:hint="@string/prompt_phoneNumberUpdate"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:inputType="phone"
-                    android:maxLines="1"/>
+                    android:maxLines="1"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 

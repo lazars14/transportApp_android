@@ -7,6 +7,8 @@ public class Constants {
     public static final String[] REQUEST_INFO_LABELS = new String[]{"Start Date: ", "End Date: ", "Price: ", "Discount: ",
         "Status: ", "Submission Date: ", "Confirmation Date: ", "Distance: ", "Total Cost: "};
 
+    public static final String API_URL = "http://http://diplomskilazarstijakovic.in.rs/api";
+
     public static final String SLASH = "/";
     public static final String SEPARATOR = "|";
 

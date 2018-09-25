@@ -149,8 +149,6 @@ public class RequestActivity extends AppCompatActivity
         LatLng startLocation = new LatLng(bundle.getDouble("startLocationLat"), bundle.getDouble("startLocationLng"));
         LatLng endLocation = new LatLng(bundle.getDouble("endLocationLat"), bundle.getDouble("endLocationLng"));
 
-        Toast.makeText(this, "mapa spremna", Toast.LENGTH_LONG).show();
-
         Log.d("startLocation ", "start location is: " + startLocation.latitude + ", " + startLocation.longitude);
         Log.d("endLocation ", "end location is: " + endLocation.latitude + ", " + endLocation.longitude);
 

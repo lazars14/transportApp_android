@@ -5,5 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="splash_screen_background">#FF7F27</color>
     <color name="loading_background">#80000000</color>
-    <color name="button_background">#FF4081</color>
+    <color name="button_background">#ff3232</color>
+    <color name="label_value_text">#000000</color>
+    <color name="request_background">#C3E4ED</color>
 </resources>

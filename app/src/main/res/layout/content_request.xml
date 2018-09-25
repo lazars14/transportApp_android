@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/cardview_shadow_start_color">
+        android:background="@color/request_background">
 
         <fragment
             android:id="@+id/map"
@@ -54,8 +54,8 @@
                 android:layout_height="wrap_content"
                 android:text="Accept"
                 android:onClick="onClick"
-                android:background="@color/button_background"
-                android:layout_marginRight="5dp"/>
+                android:layout_marginRight="5dp"
+                android:background="@color/button_background"/>
 
             <Button
                 android:id="@+id/reject_btn"

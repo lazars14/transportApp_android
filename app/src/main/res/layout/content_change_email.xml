@@ -24,7 +24,8 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <EditText
                     android:id="@+id/currentEmail_etxt"
@@ -33,7 +34,9 @@
                     android:hint="@string/prompt_currentEmail"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@android:color/black"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -51,7 +54,9 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:textColor="@android:color/black"
+                    android:theme="@style/EditTextTheme"/>
 
             </android.support.design.widget.TextInputLayout>
 

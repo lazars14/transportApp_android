@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -36,6 +37,8 @@ import helpers.NavigationHelper;
 import model.Location;
 import model.Request;
 
+import static utils.Constants.API_URL;
+
 public class RequestService {
 
     private AppCompatActivity currentActivity;
@@ -64,8 +67,7 @@ public class RequestService {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String userId = preferences.getString("user_id", "default_userId");
 
-        /* add userId to apiUrl */
-        String url = "apiUrl/" + userId;
+        String url = API_URL + "/user/" + userId + "/requests";
         JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.GET, url,
                 null,
                 new Response.Listener<JSONObject>()
@@ -90,6 +92,7 @@ public class RequestService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
+                        Log.v("REQUESTS", error.getMessage());
                         Toast.makeText(context, R.string.getRequests_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
@@ -123,7 +126,10 @@ public class RequestService {
             e.printStackTrace();
         }
 
-        String url = "apiUrl";
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String userId = preferences.getString("user_id", "default_userId");
+
+        String url = API_URL + "/user/" + userId + "/requests";
         JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.POST, url,
                 params,
                 new Response.Listener<JSONObject>()
@@ -138,6 +144,7 @@ public class RequestService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
+                        Log.v("REQUESTADD", error.getMessage());
                         Toast.makeText(context, R.string.addRequest_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
@@ -158,7 +165,10 @@ public class RequestService {
     }
 
     public Request acceptRequest(String requestId) {
-        String url = "apiUrl/" + requestId;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String userId = preferences.getString("user_id", "default_userId");
+
+        String url = API_URL + "/user/" + userId + "/requests/" + requestId + "/accept";
         JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.PUT, url,
                 null,
                 new Response.Listener<JSONObject>()
@@ -173,6 +183,7 @@ public class RequestService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
+                        Log.v("REQUESTACCEPT", error.getMessage());
                         Toast.makeText(context, R.string.acceptRequest_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
@@ -193,7 +204,10 @@ public class RequestService {
     }
 
     public Request rejectRequest(String requestId) {
-        String url = "apiUrl/" + requestId;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String userId = preferences.getString("user_id", "default_userId");
+
+        String url = API_URL + "/user/" + userId + "/requests/" + requestId + "/reject";
         JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.PUT, url,
                 null,
                 new Response.Listener<JSONObject>()
@@ -208,6 +222,7 @@ public class RequestService {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // error
+                        Log.v("REQUESTREJECT", error.getMessage());
                         Toast.makeText(context, R.string.rejectRequest_invalid, Toast.LENGTH_LONG).show();
                     }
                 }
