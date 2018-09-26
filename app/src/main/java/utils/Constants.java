@@ -7,10 +7,16 @@ public class Constants {
     public static final String[] REQUEST_INFO_LABELS = new String[]{"Start Date: ", "End Date: ", "Price: ", "Discount: ",
         "Status: ", "Submission Date: ", "Confirmation Date: ", "Distance: ", "Total Cost: "};
 
-    public static final String API_URL = "http://http://diplomskilazarstijakovic.in.rs/api";
+    public static final String API_URL = "http://diplomskilazarstijakovic.in.rs";
 
     public static final String SLASH = "/";
     public static final String SEPARATOR = "|";
+
+    public static int LOGIN = 1;
+    public static int REGISTER = 2;
+    public static int UPDATE_INFO = 3;
+    public static int CHANGE_EMAIL = 4;
+    public static int CHANGE_PASSWORD = 5;
 
     public static final HashMap<Integer, String> statuses = new HashMap<Integer, String>();
 

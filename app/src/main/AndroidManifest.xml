@@ -75,9 +75,6 @@
             </intent-filter>
         </service>
 
-        <activity
-            android:name=".activities.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
     </application>
 
 </manifest>

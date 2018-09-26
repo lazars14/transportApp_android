@@ -1,8 +1,6 @@
 package com.transportapp.lazar.transportapp.activities;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -17,14 +15,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import helpers.InternetHelper;
 import helpers.NavigationHelper;
-import model.User;
+import services.AuthService;
 import services.UserService;
+
+import static utils.Constants.CHANGE_EMAIL;
 
 public class ChangeEmailActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -50,11 +52,12 @@ public class ChangeEmailActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        userService = new UserService(this, this);
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         navigationHelper = new NavigationHelper(this);
-        userService = new UserService(this, this);
 
         currentEmailTextView = findViewById(R.id.currentEmail_etxt);
         newEmailTextView = findViewById(R.id.newEmail_etxt);
@@ -155,7 +158,10 @@ public class ChangeEmailActivity extends AppCompatActivity
             InternetHelper.checkIfConnected(this);
 
             if(InternetHelper.internet) {
-                userService.changeEmail(currentEmailTextView.getText().toString(), newEmailTextView.getText().toString());
+                Map<String, String>  body = new HashMap<String, String>();
+                body.put("oldEmail", currentEmailTextView.getText().toString());
+                body.put("newEmail", newEmailTextView.getText().toString());
+                new UserService(CHANGE_EMAIL, body, Integer.parseInt(AuthService.getUserId(this)),this, this).execute();
             }
 
         }

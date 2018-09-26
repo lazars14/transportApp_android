@@ -1,8 +1,6 @@
 package com.transportapp.lazar.transportapp.activities;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -17,13 +15,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import helpers.InternetHelper;
 import helpers.NavigationHelper;
+import services.AuthService;
 import services.UserService;
+
+import static utils.Constants.UPDATE_INFO;
 
 public class UpdateInfoActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -161,8 +164,12 @@ public class UpdateInfoActivity extends AppCompatActivity
             InternetHelper.checkIfConnected(this);
 
             if(InternetHelper.internet) {
-                userService.updateInfo(firstNameTextView.getText().toString(), lastNameTextView.getText().toString(),
-                        addressTextView.getText().toString(), phoneNumberTextView.getText().toString());
+                Map<String, String> body = new HashMap<String, String>();
+                body.put("firstName", firstNameTextView.getText().toString());
+                body.put("lastName", lastNameTextView.getText().toString());
+                body.put("address", addressTextView.getText().toString());
+                body.put("phone", phoneNumberTextView.getText().toString());
+                new UserService(UPDATE_INFO, body, Integer.parseInt(AuthService.getUserId(this)),this, this).execute();
             }
 
         }

@@ -1,10 +1,6 @@
 package com.transportapp.lazar.transportapp.activities;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -13,21 +9,21 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import helpers.InternetHelper;
 import helpers.NavigationHelper;
-import model.User;
 import services.UserService;
+
+import static utils.Constants.LOGIN;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private NavigationHelper navigationHelper;
-    private UserService userService;
 
     /* UI references */
     private EditText emailTextView;
@@ -46,8 +42,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         emailTextView = findViewById(R.id.email);
         passwordTextView = findViewById(R.id.password);
         loginButon = findViewById(R.id.login_button);
-
-        userService = new UserService(this, this);
 
         EditText[] editTexts = {emailTextView, passwordTextView};
 
@@ -95,7 +89,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             InternetHelper.checkIfConnected(this);
 
             if(InternetHelper.internet) {
-                userService.login(emailTextView.getText().toString(), passwordTextView.getText().toString());
+                Map<String, String> body = new HashMap<String, String>();
+                body.put("email", emailTextView.getText().toString());
+                body.put("password", passwordTextView.getText().toString());
+                new UserService(LOGIN, body, 0,this, this).execute();
             }
 
         } else if (view.getId() == R.id.register_button){

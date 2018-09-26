@@ -12,4 +12,10 @@ public class AuthService {
         return preferences.getString("user_authToken", "default_authToken");
     }
 
+    public static String getUserId(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        return preferences.getString("user_id", "0");
+    }
+
 }

@@ -2,22 +2,13 @@ package services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.transportapp.lazar.transportapp.R;
 import com.transportapp.lazar.transportapp.activities.LoginActivity;
 import com.transportapp.lazar.transportapp.activities.MainActivity;
@@ -25,303 +16,101 @@ import com.transportapp.lazar.transportapp.activities.MainActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import helpers.NavigationHelper;
 import model.User;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 import static utils.Constants.API_URL;
 
-public class UserService {
+public class UserService extends AsyncTask<Void, Void, Void> {
 
+    private int api;
+    private Map<String, String> body;
+    private int userId;
     private Context context;
-    private RequestQueue queue;
     private AppCompatActivity currentActivity;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    public UserService(int api, Map<String, String> body, int userId, Context context, AppCompatActivity currentActivity) {
+        this.api = api;
+        this.body = body;
+        this.userId = userId;
+        this.context = context;
+        this.currentActivity = currentActivity;
+    }
 
     public UserService(Context context, AppCompatActivity currentActivity) {
         this.context = context;
         this.currentActivity = currentActivity;
-        this.queue = Volley.newRequestQueue(context);
-        this.queue.start();
+    }
+
+    @Override
+    protected Void doInBackground(Void... voids) {
+
+        HttpService httpService = new HttpService(context);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JSONObject response = null;
+        User user = null;
+        String url = "";
+        int invalidMessage = 0;
+        try {
+            switch(api) {
+                case 1:
+                    url = API_URL + "/user/login";
+                    invalidMessage = R.string.login_invalid;
+                    response = httpService.makeApiCall(false, url, body, "post");
+                    user = mapper.readValue(response.getJSONObject("user").toString(), User.class);
+
+                    fillUserData(user, response.getString("token"));
+                    break;
+                case 2:
+                    url = API_URL + "/user/register";
+                    invalidMessage = R.string.register_error;
+                    response = httpService.makeApiCall(false, url, body, "post");
+                    user = mapper.readValue(response.getJSONObject("user").toString(), User.class);
+
+                    fillUserData(user, response.getString("token"));
+                    break;
+                case 3:
+                    url = API_URL + "/user/" + userId + "/updateInfo";
+                    invalidMessage = R.string.updateInfo_invalid;
+                    response = httpService.makeApiCall(true, url, body, "put");
+                    user = mapper.readValue(response.toString(), User.class);
+
+                    updatePersonalInfo(user.getFirstName(), user.getLastName(), user.getAddress(), user.getPhone());
+                    break;
+                case 4:
+                    url = API_URL + "/user/" + userId + "/changeEmail";
+                    invalidMessage = R.string.changeEmail_invalid;
+                    response = httpService.makeApiCall(true, url, body, "put");
+
+                    user = mapper.readValue(response.toString(), User.class);
+                    updateEmail(user.getEmail());
+                    break;
+                case 5:
+                    url = API_URL + "/user/" + userId + "/changePassword";
+                    invalidMessage = R.string.changePassword_invalid;
+                    response = httpService.makeApiCall(true, url, body, "put");
+
+                    user = mapper.readValue(response.toString(), User.class);
+                    break;
+            }
+        } catch (Exception e) {
+            Toast.makeText(context, invalidMessage, Toast.LENGTH_LONG).show();
+        }
+
+        navigateCallback();
+
+        return null;
     }
 
     public void navigateCallback() {
         NavigationHelper navigationHelper = new NavigationHelper(context);
         navigationHelper.navigateTo(MainActivity.class, currentActivity);
-    }
-
-    public void login(String email, String password) {
-        Map<String, String>  params = new HashMap<String, String>();
-        params.put("email", email);
-        params.put("password", password);
-
-        String url = API_URL + "/user/login";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url,
-                new JSONObject(params),
-                new Response.Listener<JSONObject>()
-                {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String token = response.getString("token");
-                            JSONObject userJson = response.getJSONObject("user");
-                            User user = mapper.readValue(userJson.toString(), User.class);
-
-                            fillUserData(user, token);
-                            navigateCallback();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (JsonParseException e) {
-                            e.printStackTrace();
-                        } catch (JsonMappingException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.v("LOGIN", error.getMessage());
-                        Toast.makeText(context, R.string.login_invalid, Toast.LENGTH_LONG).show();
-                    }
-                }
-        ) {
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                return headers;
-            }
-        };
-        queue.add(request);
-    }
-
-    public void register(String email, String password, String firstName, String lastName, String address, String phoneNumber) {
-        String firebaseToken = FirebaseInstanceId.getInstance().getToken();
-
-        Map<String, String>  params = new HashMap<String, String>();
-        params.put("email", email);
-        params.put("password", password);
-        params.put("firstName", firstName);
-        params.put("lastName", lastName);
-        params.put("address", address);
-        params.put("phone", phoneNumber);
-        params.put("firebaseToken", firebaseToken);
-
-        String url = API_URL + "/user/register";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url,
-                new JSONObject(params),
-                new Response.Listener<JSONObject>()
-                {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String token = response.getString("token");
-                            JSONObject userJson = response.getJSONObject("user");
-                            User user = mapper.readValue(userJson.toString(), User.class);
-
-                            fillUserData(user, token);
-                            navigateCallback();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (JsonParseException e) {
-                            e.printStackTrace();
-                        } catch (JsonMappingException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }                   }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.v("REGISTER", error.getMessage());
-                        Toast.makeText(context, R.string.register_error, Toast.LENGTH_LONG).show();
-                    }
-                }
-        ){
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                return headers;
-            }
-        };
-        queue.add(request);
-    }
-
-    public void updateInfo(String firstName, String lastName, String address, String phoneNumber) {
-        Map<String, String>  params = new HashMap<String, String>();
-        params.put("firstName", firstName);
-        params.put("lastName", lastName);
-        params.put("address", address);
-        params.put("phone", phoneNumber);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userId = preferences.getString("user_id", "default_userId");
-
-        String url = API_URL + "/user/" + userId;
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,
-                new JSONObject(params),
-                new Response.Listener<JSONObject>()
-                {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject userJson = response.getJSONObject("user");
-                            User user = mapper.readValue(userJson.toString(), User.class);
-
-                            updatePersonalInfo(user.getFirstName(), user.getLastName(), user.getAddress(), user.getPhone());
-                            navigateCallback();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (JsonParseException e) {
-                            e.printStackTrace();
-                        } catch (JsonMappingException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.v("UPDATEINFO", error.getMessage());
-                        Toast.makeText(context, R.string.updateInfo_invalid, Toast.LENGTH_LONG).show();
-                    }
-                }
-        ){
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                headers.put("x-access-token", AuthService.getAuthToken(context));
-                return headers;
-            }
-        };
-        queue.add(request);
-    }
-
-    public void changeEmail(String oldEmail, String newEmail) {
-        Map<String, String>  params = new HashMap<String, String>();
-        params.put("oldEmail", oldEmail);
-        params.put("newEmail", newEmail);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userId = preferences.getString("user_id", "default_userId");
-
-        String url = API_URL + "/user/" + userId + "/changeEmail";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,
-                new JSONObject(params),
-                new Response.Listener<JSONObject>()
-                {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject userJson = response.getJSONObject("user");
-                            User user = mapper.readValue(userJson.toString(), User.class);
-
-                            updateEmail(user.getEmail());
-                            navigateCallback();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (JsonParseException e) {
-                            e.printStackTrace();
-                        } catch (JsonMappingException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.v("UPDATEEMAIL", error.getMessage());
-                        Toast.makeText(context, R.string.changeEmail_invalid, Toast.LENGTH_LONG).show();
-                    }
-                }
-        ){
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                headers.put("x-access-token", AuthService.getAuthToken(context));
-                return headers;
-            }
-        };
-        queue.add(request);
-    }
-
-    public void changePassword(String oldPassword, String newPassword, String repeatPassword) {
-        Map<String, String>  params = new HashMap<String, String>();
-        params.put("oldPassword", oldPassword);
-        params.put("newPassword", newPassword);
-        params.put("repeatPassword", repeatPassword);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userId = preferences.getString("user_id", "default_userId");
-
-        String url = API_URL + "/user/" + userId + "/changePassword";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,
-                new JSONObject(params),
-                new Response.Listener<JSONObject>()
-                {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject userJson = response.getJSONObject("user");
-                            User user = mapper.readValue(userJson.toString(), User.class);
-
-                            navigateCallback();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (JsonParseException e) {
-                            e.printStackTrace();
-                        } catch (JsonMappingException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.v("CHANGEPASSWORD", error.getMessage());
-                        Toast.makeText(context, R.string.changePassword_invalid, Toast.LENGTH_LONG).show();
-                    }
-                }
-        ){
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                headers.put("x-access-token", AuthService.getAuthToken(context));
-                return headers;
-            }
-        };
-        queue.add(request);
     }
 
     public void logout() {
@@ -385,6 +174,4 @@ public class UserService {
 
         editor.apply();
     }
-
-
 }

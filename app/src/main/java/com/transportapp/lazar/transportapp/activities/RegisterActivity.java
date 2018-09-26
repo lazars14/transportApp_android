@@ -1,8 +1,6 @@
 package com.transportapp.lazar.transportapp.activities;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -11,20 +9,22 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.transportapp.lazar.transportapp.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import helpers.InternetHelper;
 import helpers.NavigationHelper;
-import model.User;
 import services.UserService;
+
+import static utils.Constants.REGISTER;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     private NavigationHelper navigationHelper;
-    private UserService userService;
 
     /* UI references */
     private EditText emailTextView;
@@ -43,7 +43,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setSupportActionBar(toolbar);
 
         navigationHelper = new NavigationHelper(this);
-        userService = new UserService(this, this);
 
         emailTextView = findViewById(R.id.email_etxt);
         passwordTextView = findViewById(R.id.password_etxt);
@@ -98,8 +97,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         InternetHelper.checkIfConnected(getApplicationContext());
 
         if(InternetHelper.internet) {
-            userService.register(emailTextView.getText().toString(), passwordTextView.getText().toString(), firstNameTextView.getText().toString(),
-                    lastNameTextView.getText().toString(), addressTextView.getText().toString(), phoneNumberTextView.getText().toString());
+            String firebaseToken = FirebaseInstanceId.getInstance().getToken();
+
+            Map<String, String>  body = new HashMap<String, String>();
+            body.put("email", emailTextView.getText().toString());
+            body.put("password", passwordTextView.getText().toString());
+            body.put("firstName", firstNameTextView.getText().toString());
+            body.put("lastName", lastNameTextView.getText().toString());
+            body.put("address", addressTextView.getText().toString());
+            body.put("phone", phoneNumberTextView.getText().toString());
+            body.put("firebaseToken", firebaseToken);
+
+            new UserService(REGISTER, body, 0,this, this).execute();
         }
     }
 }

@@ -36,7 +36,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 navActivity = checkIfLoggedIn();
 
 //                navigationHelper.navigateTo(navActivity, SplashScreenActivity.this);
-                navigationHelper.navigateTo(MainActivity.class, SplashScreenActivity.this);
+                navigationHelper.navigateTo(LoginActivity.class, SplashScreenActivity.this);
             }
         };
 

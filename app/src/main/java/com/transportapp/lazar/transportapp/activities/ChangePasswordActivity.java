@@ -1,8 +1,6 @@
 package com.transportapp.lazar.transportapp.activities;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -17,13 +15,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.transportapp.lazar.transportapp.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import helpers.InternetHelper;
 import helpers.NavigationHelper;
+import services.AuthService;
 import services.UserService;
+
+import static utils.Constants.CHANGE_PASSWORD;
 
 public class ChangePasswordActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -53,8 +56,9 @@ public class ChangePasswordActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        navigationHelper = new NavigationHelper(this);
         userService = new UserService(this, this);
+
+        navigationHelper = new NavigationHelper(this);
 
         oldPasswordTextView = findViewById(R.id.oldPassword_etxt);
         newPasswordTextView = findViewById(R.id.newPassword_etxt);
@@ -156,7 +160,11 @@ public class ChangePasswordActivity extends AppCompatActivity
             InternetHelper.checkIfConnected(this);
 
             if(InternetHelper.internet) {
-                userService.changePassword(oldPasswordTextView.getText().toString(), newPasswordTextView.getText().toString(), repeatPasswordTextView.getText().toString());
+                Map<String, String> body = new HashMap<String, String>();
+                body.put("oldPassword", oldPasswordTextView.getText().toString());
+                body.put("newPassword", newPasswordTextView.getText().toString());
+                body.put("repeatPassword", repeatPasswordTextView.getText().toString());
+                new UserService(CHANGE_PASSWORD, body, Integer.parseInt(AuthService.getUserId(this)),this, this).execute();
             }
 
         }
