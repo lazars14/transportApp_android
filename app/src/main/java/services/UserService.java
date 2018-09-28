@@ -30,16 +30,22 @@ public class UserService extends AsyncTask<Void, Void, Void> {
 
     private int api;
     private Map<String, String> body;
-    private int userId;
+    private String userId;
     private Context context;
     private AppCompatActivity currentActivity;
 
-    public UserService(int api, Map<String, String> body, int userId, Context context, AppCompatActivity currentActivity) {
+    private boolean valid;
+    private JSONObject response;
+    private String errorMessage;
+    private int successMessage;
+
+    public UserService(int api, Map<String, String> body, String userId, Context context, AppCompatActivity currentActivity) {
         this.api = api;
         this.body = body;
         this.userId = userId;
         this.context = context;
         this.currentActivity = currentActivity;
+        this.valid = true;
     }
 
     public UserService(Context context, AppCompatActivity currentActivity) {
@@ -48,64 +54,96 @@ public class UserService extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
+    protected void onPostExecute(Void aVoid) {
+        if(!valid) {
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, successMessage, Toast.LENGTH_LONG).show();
+            navigateCallback();
+        }
+    }
+
+    @Override
     protected Void doInBackground(Void... voids) {
 
         HttpService httpService = new HttpService(context);
-
-        ObjectMapper mapper = new ObjectMapper();
-        JSONObject response = null;
-        User user = null;
         String url = "";
-        int invalidMessage = 0;
         try {
             switch(api) {
                 case 1:
-                    url = API_URL + "/user/login";
-                    invalidMessage = R.string.login_invalid;
+                    url = "/user/login";
+                    successMessage = R.string.login_success;
                     response = httpService.makeApiCall(false, url, body, "post");
-                    user = mapper.readValue(response.getJSONObject("user").toString(), User.class);
 
-                    fillUserData(user, response.getString("token"));
+                    errorMessage = getErrorMessage();
+                    if(errorMessage != null) valid = false;
+                    else {
+                        fillUserData(response.getJSONObject("user"), response.getString("token"));
+                    }
+
                     break;
                 case 2:
-                    url = API_URL + "/user/register";
-                    invalidMessage = R.string.register_error;
+                    url = "/user/register";
+                    successMessage = R.string.register_success;
                     response = httpService.makeApiCall(false, url, body, "post");
-                    user = mapper.readValue(response.getJSONObject("user").toString(), User.class);
 
-                    fillUserData(user, response.getString("token"));
+                    errorMessage = getErrorMessage();
+                    if(errorMessage != null) valid = false;
+                    else {
+                        fillUserData(response.getJSONObject("user"), response.getString("token"));
+                    }
+
                     break;
                 case 3:
-                    url = API_URL + "/user/" + userId + "/updateInfo";
-                    invalidMessage = R.string.updateInfo_invalid;
+                    url = "/user/" + userId + "/updateInfo";
+                    Log.v("TALAMBASKO", "Change password user id is " + userId);
+                    successMessage = R.string.update_info_success;
                     response = httpService.makeApiCall(true, url, body, "put");
-                    user = mapper.readValue(response.toString(), User.class);
 
-                    updatePersonalInfo(user.getFirstName(), user.getLastName(), user.getAddress(), user.getPhone());
+                    errorMessage = getErrorMessage();
+                    if(errorMessage != null) valid = false;
+                    else {
+                        updatePersonalInfo(response.getJSONObject("user"));
+                    }
+
                     break;
                 case 4:
-                    url = API_URL + "/user/" + userId + "/changeEmail";
-                    invalidMessage = R.string.changeEmail_invalid;
+                    url = "/user/" + userId + "/changeEmail";
+                    successMessage = R.string.change_email_success;
                     response = httpService.makeApiCall(true, url, body, "put");
 
-                    user = mapper.readValue(response.toString(), User.class);
-                    updateEmail(user.getEmail());
+                    errorMessage = getErrorMessage();
+                    if(errorMessage != null) valid = false;
+                    else {
+                        updateEmail(body.get("newEmail"));
+                    }
+
                     break;
                 case 5:
-                    url = API_URL + "/user/" + userId + "/changePassword";
-                    invalidMessage = R.string.changePassword_invalid;
+                    url = "/user/" + userId + "/changePassword";
+                    successMessage = R.string.change_password_success;
                     response = httpService.makeApiCall(true, url, body, "put");
 
-                    user = mapper.readValue(response.toString(), User.class);
+                    errorMessage = getErrorMessage();
+                    if(errorMessage != null) valid = false;
+
                     break;
             }
         } catch (Exception e) {
-            Toast.makeText(context, invalidMessage, Toast.LENGTH_LONG).show();
+            Log.v("TALAMBASKO", "exception in user service " + e.getMessage());
         }
 
-        navigateCallback();
-
         return null;
+    }
+
+    public String getErrorMessage() {
+        JSONObject errorObject = null;
+        try {
+            errorObject = response.getJSONObject("error");
+            return errorObject.getString("message");
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     public void navigateCallback() {
@@ -134,22 +172,27 @@ public class UserService extends AsyncTask<Void, Void, Void> {
         navHelper.navigateTo(LoginActivity.class, currentActivity);
     }
 
-    private void fillUserData(User loggedUser, String authToken) {
+    private void fillUserData(JSONObject loggedUser, String authToken) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         SharedPreferences.Editor editor = preferences.edit();
 
-        editor.putString("user_id", loggedUser.getId());
-        editor.putString("user_email", loggedUser.getEmail());
-        editor.putString("user_firstName", loggedUser.getFirstName());
-        editor.putString("user_lastName", loggedUser.getLastName());
-        editor.putString("user_address", loggedUser.getAddress());
-        editor.putString("user_phone", loggedUser.getPhone());
-        editor.putString("user_firebaseToken", loggedUser.getFirebaseToken());
+        try {
+            Log.v("TALAMBASKO", "User id is " + loggedUser.getString("_id"));
+            editor.putString("user_id", loggedUser.getString("_id"));
+            editor.putString("user_email", loggedUser.getString("email"));
+            editor.putString("user_firstName", loggedUser.getString("firstName"));
+            editor.putString("user_lastName", loggedUser.getString("lastName"));
+            editor.putString("user_address", loggedUser.getString("address"));
+            editor.putString("user_phone", loggedUser.getString("phone"));
+            editor.putString("user_firebaseToken", loggedUser.getString("firebaseToken"));
 
-        editor.putString("user_authToken", authToken);
+            editor.putString("user_authToken", authToken);
 
-        editor.apply();
+            editor.apply();
+        } catch (Exception e) {
+            Log.v("TALAMBASKO", "Fill user data exception is " + e.getMessage());
+        }
     }
 
     private void updateEmail(String newEmail) {
@@ -162,16 +205,21 @@ public class UserService extends AsyncTask<Void, Void, Void> {
         editor.apply();
     }
 
-    private void updatePersonalInfo(String firstName, String lastName, String address, String phone) {
+    private void updatePersonalInfo(JSONObject user) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         SharedPreferences.Editor editor = preferences.edit();
 
-        editor.putString("user_firstName", firstName);
-        editor.putString("user_lastName", lastName);
-        editor.putString("user_address", address);
-        editor.putString("user_phone", phone);
+        try {
+            editor.putString("user_firstName", user.getString("firstName"));
+            editor.putString("user_lastName", user.getString("lastName"));
+            editor.putString("user_address", user.getString("address"));
+            editor.putString("user_phone", user.getString("phone"));
 
-        editor.apply();
+            editor.apply();
+        } catch (Exception e) {
+
+        }
+
     }
 }

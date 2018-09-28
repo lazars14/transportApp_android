@@ -26,7 +26,6 @@ import java.util.Date;
 import helpers.DateHelper;
 import helpers.NavigationHelper;
 import helpers.ValuePairViewHelper;
-import services.RequestService;
 import services.UserService;
 import utils.Constants;
 
@@ -37,7 +36,6 @@ public class RequestActivity extends AppCompatActivity
 
     private NavigationHelper navigationHelper;
     private UserService userService;
-    private RequestService requestService;
 
     private String request_id;
     private Date startDate;
@@ -65,7 +63,6 @@ public class RequestActivity extends AppCompatActivity
 
         navigationHelper = new NavigationHelper(this);
         userService = new UserService(this, this);
-        requestService = new RequestService(this, this, null);
 
         acceptBtn = findViewById(R.id.accept_btn);
         rejectBtn = findViewById(R.id.reject_btn);
@@ -213,9 +210,9 @@ public class RequestActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.accept_btn) {
-            requestService.acceptRequest(request_id);
+//            requestService.acceptRequest(request_id);
         } else if(view.getId() == R.id.reject_btn) {
-            requestService.rejectRequest(request_id);
+//            requestService.rejectRequest(request_id);
         }
     }
 }

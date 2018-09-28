@@ -63,36 +63,36 @@ public class ChangeEmailActivity extends AppCompatActivity
         newEmailTextView = findViewById(R.id.newEmail_etxt);
         changeEmailButton = findViewById(R.id.changeEmail_btn);
 
-        EditText[] editTexts = {currentEmailTextView, newEmailTextView};
-
-        for (EditText editText : editTexts) {
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    if(!changeEmailButton.isEnabled()) {
-                        /* button disabled */
-                        if(!TextUtils.isEmpty(currentEmailTextView.getText().toString()) && !TextUtils.isEmpty(newEmailTextView.getText().toString())) {
-                            changeEmailButton.setEnabled(true);
-                        }
-                    } else {
-                        /* button enabled */
-                        if(TextUtils.isEmpty(currentEmailTextView.getText().toString()) || TextUtils.isEmpty(newEmailTextView.getText().toString())) {
-                            changeEmailButton.setEnabled(false);
-                        }
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-        }
+//        EditText[] editTexts = {currentEmailTextView, newEmailTextView};
+//
+//        for (EditText editText : editTexts) {
+//            editText.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                    if(!changeEmailButton.isEnabled()) {
+//                        /* button disabled */
+//                        if(!TextUtils.isEmpty(currentEmailTextView.getText().toString()) && !TextUtils.isEmpty(newEmailTextView.getText().toString())) {
+//                            changeEmailButton.setEnabled(true);
+//                        }
+//                    } else {
+//                        /* button enabled */
+//                        if(TextUtils.isEmpty(currentEmailTextView.getText().toString()) || TextUtils.isEmpty(newEmailTextView.getText().toString())) {
+//                            changeEmailButton.setEnabled(false);
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable editable) {
+//
+//                }
+//            });
+//        }
     }
 
     @Override
@@ -153,7 +153,7 @@ public class ChangeEmailActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.login_button) {
+        if(view.getId() == R.id.changeEmail_btn) {
 
             InternetHelper.checkIfConnected(this);
 
@@ -161,7 +161,7 @@ public class ChangeEmailActivity extends AppCompatActivity
                 Map<String, String>  body = new HashMap<String, String>();
                 body.put("oldEmail", currentEmailTextView.getText().toString());
                 body.put("newEmail", newEmailTextView.getText().toString());
-                new UserService(CHANGE_EMAIL, body, Integer.parseInt(AuthService.getUserId(this)),this, this).execute();
+                new UserService(CHANGE_EMAIL, body, AuthService.getUserId(this),this, this).execute();
             }
 
         }

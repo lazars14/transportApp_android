@@ -1,6 +1,8 @@
 package com.transportapp.lazar.transportapp.activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -67,38 +69,40 @@ public class UpdateInfoActivity extends AppCompatActivity
 
         updateInfoButton = findViewById(R.id.updateInfo_btn);
 
-        EditText[] editTexts = {firstNameTextView, lastNameTextView, addressTextView, phoneNumberTextView};
+        fillUserInfo();
 
-        for (EditText editText : editTexts) {
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    if(!updateInfoButton.isEnabled()) {
-                        /* button disabled */
-                        if(!TextUtils.isEmpty(firstNameTextView.getText().toString()) && !TextUtils.isEmpty(lastNameTextView.getText().toString()) &&
-                                !TextUtils.isEmpty(addressTextView.getText().toString()) && !TextUtils.isEmpty(phoneNumberTextView.getText().toString())) {
-                            updateInfoButton.setEnabled(true);
-                        }
-                    } else {
-                        /* button enabled */
-                        if(TextUtils.isEmpty(firstNameTextView.getText().toString()) || TextUtils.isEmpty(lastNameTextView.getText().toString()) ||
-                                TextUtils.isEmpty(addressTextView.getText().toString()) || TextUtils.isEmpty(phoneNumberTextView.getText().toString())) {
-                            updateInfoButton.setEnabled(false);
-                        }
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-        }
+//        EditText[] editTexts = {firstNameTextView, lastNameTextView, addressTextView, phoneNumberTextView};
+//
+//        for (EditText editText : editTexts) {
+//            editText.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                    if(!updateInfoButton.isEnabled()) {
+//                        /* button disabled */
+//                        if(!TextUtils.isEmpty(firstNameTextView.getText().toString()) && !TextUtils.isEmpty(lastNameTextView.getText().toString()) &&
+//                                !TextUtils.isEmpty(addressTextView.getText().toString()) && !TextUtils.isEmpty(phoneNumberTextView.getText().toString())) {
+//                            updateInfoButton.setEnabled(true);
+//                        }
+//                    } else {
+//                        /* button enabled */
+//                        if(TextUtils.isEmpty(firstNameTextView.getText().toString()) || TextUtils.isEmpty(lastNameTextView.getText().toString()) ||
+//                                TextUtils.isEmpty(addressTextView.getText().toString()) || TextUtils.isEmpty(phoneNumberTextView.getText().toString())) {
+//                            updateInfoButton.setEnabled(false);
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable editable) {
+//
+//                }
+//            });
+//        }
     }
 
     @Override
@@ -159,7 +163,7 @@ public class UpdateInfoActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.login_button) {
+        if(view.getId() == R.id.updateInfo_btn) {
 
             InternetHelper.checkIfConnected(this);
 
@@ -169,9 +173,19 @@ public class UpdateInfoActivity extends AppCompatActivity
                 body.put("lastName", lastNameTextView.getText().toString());
                 body.put("address", addressTextView.getText().toString());
                 body.put("phone", phoneNumberTextView.getText().toString());
-                new UserService(UPDATE_INFO, body, Integer.parseInt(AuthService.getUserId(this)),this, this).execute();
+                new UserService(UPDATE_INFO, body, AuthService.getUserId(this),this, this).execute();
             }
 
         }
+    }
+
+    public void fillUserInfo() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        firstNameTextView.setText(preferences.getString("user_firstName", "John"));
+        lastNameTextView.setText(preferences.getString("user_lastName", "Doe"));
+        addressTextView.setText(preferences.getString("user_address", "St John's Boulevard 12"));
+        phoneNumberTextView.setText(preferences.getString("user_phone", "0123456789"));
+
     }
 }

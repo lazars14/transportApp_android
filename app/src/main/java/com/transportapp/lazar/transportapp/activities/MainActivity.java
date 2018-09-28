@@ -24,7 +24,6 @@ import helpers.InternetHelper;
 import helpers.NavigationHelper;
 import model.Location;
 import model.Request;
-import services.RequestService;
 import services.UserService;
 
 public class MainActivity extends AppCompatActivity
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity
 
     private NavigationHelper navigationHelper;
     private UserService userService;
-    private RequestService requestService;
 
     Request request = new Request("dummyId", new Location(45.2671, 19.8335), new Location(46.100376, 19.667587), new Date(), new Date(),
             100, 5, 0, "asdf;ksajdfassnlnnaosidfn", new Date(), new Date(), "asdfsadfsadfasfasdf", 0, 0);
@@ -82,7 +80,6 @@ public class MainActivity extends AppCompatActivity
 
         navigationHelper = new NavigationHelper(this);
         userService = new UserService(this, this);
-        requestService = new RequestService(this, this, null);
 
         InternetHelper.checkIfConnected(this);
 

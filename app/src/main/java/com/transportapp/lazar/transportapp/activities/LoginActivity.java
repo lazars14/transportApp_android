@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Map<String, String> body = new HashMap<String, String>();
                 body.put("email", emailTextView.getText().toString());
                 body.put("password", passwordTextView.getText().toString());
-                new UserService(LOGIN, body, 0,this, this).execute();
+                new UserService(LOGIN, body, null,this, this).execute();
             }
 
         } else if (view.getId() == R.id.register_button){

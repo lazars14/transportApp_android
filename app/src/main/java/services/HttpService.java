@@ -9,6 +9,7 @@ import java.util.Map;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -19,6 +20,8 @@ import static utils.Constants.API_URL;
 public class HttpService {
 
     private Context context;
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public HttpService(Context context) {
         this.context = context;
@@ -64,12 +67,62 @@ public class HttpService {
         }
 
         Request request = requestBuilder.build();
-
         try {
             Response response = client.newCall(request).execute();
             String jsonData = response.body().string();
 
-            return new JSONObject(jsonData);
+            JSONObject jsonResponse = new JSONObject(jsonData);
+            Log.v("TALAMBASKO", "http - response to string " + jsonResponse.toString());
+            return jsonResponse;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public JSONObject makeApiCallJsonBody(boolean needsToken, String url, String jsonBody, String method) {
+
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/json; charset=utf-8");
+
+        if(needsToken) headers.put("x-access-token", AuthService.getAuthToken(context));
+
+        Headers headersObj = Headers.of(headers);
+
+        RequestBody requestBody = null;
+        if(jsonBody != null) {
+            requestBody = RequestBody.create(JSON, jsonBody);
+        }
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request.Builder requestBuilder = new Request.Builder();
+        requestBuilder.url(API_URL + url).headers(headersObj);
+
+        switch (method) {
+            case "post":
+                requestBuilder.post(requestBody);
+                break;
+            case "put":
+                requestBuilder.put(requestBody);
+                break;
+            case "get":
+                requestBuilder.get();
+                break;
+            case "delete":
+                requestBuilder.delete();
+                break;
+        }
+
+        Request request = requestBuilder.build();
+        try {
+            Response response = client.newCall(request).execute();
+            String jsonData = response.body().string();
+
+            JSONObject jsonResponse = new JSONObject(jsonData);
+            Log.v("TALAMBASKO", "http - response to string " + jsonResponse.toString());
+            return jsonResponse;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

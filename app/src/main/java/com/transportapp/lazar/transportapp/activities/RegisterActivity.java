@@ -108,7 +108,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             body.put("phone", phoneNumberTextView.getText().toString());
             body.put("firebaseToken", firebaseToken);
 
-            new UserService(REGISTER, body, 0,this, this).execute();
+            new UserService(REGISTER, body, null,this, this).execute();
         }
     }
 }

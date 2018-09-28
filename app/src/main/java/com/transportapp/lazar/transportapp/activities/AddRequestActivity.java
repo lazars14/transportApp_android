@@ -6,12 +6,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Looper;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -19,7 +16,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -28,29 +24,29 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.transportapp.lazar.transportapp.R;
 
-import org.w3c.dom.Document;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import helpers.DialogHelper;
 import helpers.InternetHelper;
 import helpers.LocationHelper;
-import model.Location;
+import services.AuthService;
 import services.DrawPolylineService;
 import services.GoogleMapsService;
 import services.RequestService;
 
+import static utils.Constants.ADD_REQUEST;
+
 public class AddRequestActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener {
 
-    private RequestService requestService;
     private GoogleMapsService mapsService;
 
     private GoogleMap map;
@@ -98,7 +94,6 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        requestService = new RequestService(this, null, this);
         mapsService = new GoogleMapsService();
 
         loadingBackground = findViewById(R.id.load_background);
@@ -195,8 +190,23 @@ public class AddRequestActivity extends FragmentActivity implements OnMapReadyCa
                 double startLocationLng = Double.parseDouble(String.format("%.4f", points.get(0).longitude));
                 double endLocationLat = Double.parseDouble(String.format("%.4f", points.get(1).latitude));
                 double endLocationLng = Double.parseDouble(String.format("%.4f", points.get(1).longitude));
-                // for testing
-//                requestService.addRequest(points.get(0), points.get(1));
+                JSONObject params = new JSONObject();
+                JSONObject startLocationJson = new JSONObject();
+                JSONObject endLocationJson = new JSONObject();
+                try {
+                    startLocationJson.put("lat", startLocationLat);
+                    startLocationJson.put("lng", startLocationLng);
+                    endLocationJson.put("lat", endLocationLat);
+                    endLocationJson.put("lng", endLocationLng);
+                    params.put("startLocation", startLocationJson);
+                    params.put("endLocation", endLocationJson);
+//                    new RequestService(ADD_REQUEST, params.toString(), AuthService.getUserId(this), null, this, );
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Bad request data", Toast.LENGTH_LONG).show();
+                }
+
+
             } else {
                 Toast.makeText(this, "You must select two locations!", Toast.LENGTH_LONG).show();
             }

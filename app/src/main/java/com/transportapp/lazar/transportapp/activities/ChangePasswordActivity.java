@@ -65,36 +65,36 @@ public class ChangePasswordActivity extends AppCompatActivity
         repeatPasswordTextView = findViewById(R.id.repeatPassword_etxt);
         changePasswordButton = findViewById(R.id.changePassword_btn);
 
-        EditText[] editTexts = {oldPasswordTextView, newPasswordTextView, repeatPasswordTextView};
-
-        for (EditText editText : editTexts) {
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    if(!changePasswordButton.isEnabled()) {
-                        /* button disabled */
-                        if(!TextUtils.isEmpty(oldPasswordTextView.getText().toString()) && !TextUtils.isEmpty(newPasswordTextView.getText().toString()) && !TextUtils.isEmpty(repeatPasswordTextView.getText().toString())) {
-                            changePasswordButton.setEnabled(true);
-                        }
-                    } else {
-                        /* button enabled */
-                        if(TextUtils.isEmpty(oldPasswordTextView.getText().toString()) || TextUtils.isEmpty(newPasswordTextView.getText().toString()) || TextUtils.isEmpty(repeatPasswordTextView.getText().toString())) {
-                            changePasswordButton.setEnabled(false);
-                        }
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-        }
+//        EditText[] editTexts = {oldPasswordTextView, newPasswordTextView, repeatPasswordTextView};
+//
+//        for (EditText editText : editTexts) {
+//            editText.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                    if(!changePasswordButton.isEnabled()) {
+//                        /* button disabled */
+//                        if(!TextUtils.isEmpty(oldPasswordTextView.getText().toString()) && !TextUtils.isEmpty(newPasswordTextView.getText().toString()) && !TextUtils.isEmpty(repeatPasswordTextView.getText().toString())) {
+//                            changePasswordButton.setEnabled(true);
+//                        }
+//                    } else {
+//                        /* button enabled */
+//                        if(TextUtils.isEmpty(oldPasswordTextView.getText().toString()) || TextUtils.isEmpty(newPasswordTextView.getText().toString()) || TextUtils.isEmpty(repeatPasswordTextView.getText().toString())) {
+//                            changePasswordButton.setEnabled(false);
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable editable) {
+//
+//                }
+//            });
+//        }
     }
 
     @Override
@@ -155,7 +155,7 @@ public class ChangePasswordActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.login_button) {
+        if(view.getId() == R.id.changePassword_btn) {
 
             InternetHelper.checkIfConnected(this);
 
@@ -164,7 +164,7 @@ public class ChangePasswordActivity extends AppCompatActivity
                 body.put("oldPassword", oldPasswordTextView.getText().toString());
                 body.put("newPassword", newPasswordTextView.getText().toString());
                 body.put("repeatPassword", repeatPasswordTextView.getText().toString());
-                new UserService(CHANGE_PASSWORD, body, Integer.parseInt(AuthService.getUserId(this)),this, this).execute();
+                new UserService(CHANGE_PASSWORD, body, AuthService.getUserId(this),this, this).execute();
             }
 
         }
